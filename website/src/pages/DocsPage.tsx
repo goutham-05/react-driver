@@ -91,6 +91,14 @@ const sections = [
   { id: "debug",            label: "debug mode"            },
   { id: "skip-tour",        label: "skipTour"              },
   { id: "testing",          label: "Testing utilities"     },
+  { id: "show-after",       label: "showAfter scheduling"  },
+  { id: "show-count",       label: "showCount"             },
+  { id: "tour-history",     label: "useTourHistory"        },
+  { id: "tour-analytics",   label: "useTourAnalytics"      },
+  { id: "tour-tooltip",     label: "TourTooltip"           },
+  { id: "adapters",         label: "Analytics adapters"    },
+  { id: "ux-extras",        label: "delayAfter · keyboard ···" },
+  { id: "cdn",              label: "CDN / UMD"             },
   { id: "tour-provider",    label: "TourProvider"          },
   { id: "wait-for-element", label: "waitForElement"        },
   { id: "contributing",     label: "Contributing"          },
@@ -698,6 +706,117 @@ vi.mock("@oqlet/react-driver", () => ({ useTour: () => mockTour }));
 
 // Assert your component wires up correctly
 expect(mockTour.start).toHaveBeenCalledWith(0);`} />
+
+        {/* showAfter */}
+        <H2 id="show-after">showAfter — auto-start scheduling</H2>
+        <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          Automatically start the tour when a condition is met. All conditions must pass together.
+          The tour still respects <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">persist</code> and <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">showCount</code>.
+        </p>
+        <Code code={`useTour({
+  id: "onboarding",
+  showAfter: { delay: 5000 },                    // 5 s after mount
+  showAfter: { visits: 3 },                       // from the 3rd page visit
+  showAfter: { date: "2026-09-01" },              // from a release date
+  showAfter: { visits: 2, delay: 3000 },          // 3 s after the 2nd visit
+  steps: [...],
+});`} />
+
+        {/* showCount */}
+        <H2 id="show-count">showCount</H2>
+        <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          Show a tour at most N times. After N starts the tour silently stops launching — different from <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">persist</code> (which stops after first completion).
+        </p>
+        <Code code={`useTour({ id: "feature-hint", showCount: 3, steps: [...] });
+// Shows up to 3 times, then stops automatically.`} />
+
+        {/* useTourHistory */}
+        <H2 id="tour-history">useTourHistory()</H2>
+        <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          Reads all stored tour records from localStorage. Useful for "X% of onboarding complete" progress indicators.
+        </p>
+        <Code code={`const { records, clearAll } = useTourHistory();
+
+const completed  = records.filter(r => r.completedAt);
+const inProgress = records.filter(r => r.currentStep !== undefined);
+const pct = Math.round((completed.length / totalTours) * 100);`} />
+
+        {/* useTourAnalytics */}
+        <H2 id="tour-analytics">useTourAnalytics()</H2>
+        <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          Wraps <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">useTour</code> and aggregates step-timing data into a session summary.
+          Wire it to your analytics backend in <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">onFinish</code> / <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">onSkip</code>.
+        </p>
+        <Code code={`const { controls, summary } = useTourAnalytics({
+  steps: [...],
+  onFinish: () => analytics.track("tour_complete", {
+    completionRate: summary.completionRate,   // 0–1
+    avgTimePerStep: summary.avgTimePerStep,   // ms
+    dropOffStep:    summary.dropOffStep,      // null if completed
+    steps:          summary.steps,            // [{ stepIndex, duration, reason }]
+  }),
+});`} />
+
+        {/* TourTooltip */}
+        <H2 id="tour-tooltip">TourTooltip</H2>
+        <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          A lightweight, non-intrusive tooltip — no overlay, no darkening. Shows on hover, click, or always. Positioned as a portal with <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">ResizeObserver</code>.
+        </p>
+        <Code code={`import { TourTooltip } from "@oqlet/react-driver";
+
+// Hover tooltip on a help icon
+<TourTooltip target="#help-icon" content="Click for a guided tour." trigger="hover" />
+
+// Persistent callout with dismiss button
+<TourTooltip
+  target="#new-feature"
+  title="✨ New!"
+  content="Check out the redesigned dashboard."
+  trigger="always"
+  side="bottom"
+  onDismiss={() => dismiss()}
+/>`} />
+
+        {/* Adapters */}
+        <H2 id="adapters">Analytics adapters</H2>
+        <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          Pre-wired configs for PostHog, Segment, Mixpanel, and Amplitude. Spread into <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">useTour</code> to automatically track all tour events.
+        </p>
+        <Code code={`import { adapters } from "@oqlet/react-driver";
+import posthog from "posthog-js";
+
+// PostHog
+useTour({ ...adapters.posthog(posthog, { tourId: "onboarding" }), steps: [...] });
+
+// Segment
+useTour({ ...adapters.segment(window.analytics, { tourId: "onboarding" }), steps: [...] });
+
+// Mixpanel — adapters.mixpanel(mixpanel, meta)
+// Amplitude — adapters.amplitude(amplitude, meta)`} />
+        <p className="mt-3 text-sm text-gray-500 dark:text-zinc-400">
+          Each adapter wires up: <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">onStart</code>, <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">onFinish</code>, <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">onSkip</code>, <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">onStepEnter</code>, <code className="rounded bg-gray-100 px-1 font-mono text-sm dark:bg-zinc-800">onStepExit</code>.
+        </p>
+
+        {/* UX extras */}
+        <H2 id="ux-extras">delayAfter · highlightPadding · keyboard · waitForIdle</H2>
+        <PropTable rows={[
+          { prop: "delayAfter",       type: "number (TourStep)",   desc: "Wait N ms after Next is clicked before advancing. Lets exit animations finish." },
+          { prop: "highlightPadding", type: "number",              desc: "Extra px between element and overlay cutout. Set on TourConfig (global) or TourStep (per-step)." },
+          { prop: "keyboard",         type: "{ enabled?, next?, prev?, close? }", desc: "Disable keyboard nav or remap keys. keyboard: { enabled: false } turns it off entirely." },
+          { prop: "waitForIdle",      type: "boolean | number",    desc: "Wait for requestIdleCallback before starting. true = 2 s timeout, number = custom timeout ms." },
+        ]} />
+
+        {/* CDN / UMD */}
+        <H2 id="cdn">CDN / UMD</H2>
+        <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          A minified UMD bundle is included for script-tag usage or CodePen / StackBlitz prototypes.
+        </p>
+        <Code lang="html" code={`<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@oqlet/react-driver/dist/react-driver.umd.js"></script>
+<script>
+  const { useTour } = ReactDriver;
+</script>`} />
 
         {/* TourProvider */}
         <H2 id="tour-provider">TourProvider</H2>
