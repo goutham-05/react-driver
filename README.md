@@ -5,15 +5,20 @@ Schema-driven, plug-and-play guided tours for React — built on [driver.js](htt
 Define your tour as data. One hook, zero boilerplate.
 
 ```tsx
-const { start } = useTour({
-  steps: [
-    { target: "#save-btn",  title: "Save your work",  content: "Click here to save at any time." },
-    { target: "#share-btn", title: "Share with team", content: "Invite collaborators in one click." },
-  ],
-  onFinish: () => markOnboardingDone(),
-});
+import { useTour } from "@oqlet/react-driver";
+import "@oqlet/react-driver/driver.css";
 
-return <button onClick={() => start()}>Take the tour</button>;
+function App() {
+  const { start } = useTour({
+    steps: [
+      { target: "#save-btn",  title: "Save your work",  content: "Click here to save." },
+      { target: "#share-btn", title: "Share with team", content: "Invite collaborators." },
+    ],
+    onFinish: () => markOnboardingDone(),
+  });
+
+  return <button onClick={() => start()}>Take the tour</button>;
+}
 ```
 
 ---
@@ -21,196 +26,157 @@ return <button onClick={() => start()}>Take the tour</button>;
 ## Installation
 
 ```bash
-npm install @oqlet/react-driver driver.js
+npm install @oqlet/react-driver
 ```
 
-> `driver.js` is a peer dependency — install it alongside the library.
-> Also import driver.js's CSS once in your app entry:
-> ```ts
-> import "driver.js/dist/driver.css";
-> ```
-
----
-
-## Quick start
-
-### Single tour (no provider needed)
-
-```tsx
-import { useTour } from "@oqlet/react-driver";
-
-function App() {
-  const { start } = useTour({
-    steps: [
-      { target: "#step-1", title: "Welcome", content: "Let's get you started." },
-      { target: "#step-2", title: "Settings", content: "Customise your experience here." },
-    ],
-  });
-
-  return <button onClick={() => start()}>Start tour</button>;
-}
-```
-
-### Multiple tours (with provider)
-
-Wrap your app root with `<TourProvider>` to coordinate multiple tours and ensure only one runs at a time.
-
-```tsx
-import { TourProvider, useTour } from "@oqlet/react-driver";
-
-function Root() {
-  return (
-    <TourProvider>
-      <App />
-    </TourProvider>
-  );
-}
-
-function Onboarding() {
-  const { start } = useTour({ steps: [ /* ... */ ] });
-  return <button onClick={() => start()}>Onboarding tour</button>;
-}
-
-function FeatureTour() {
-  const { start } = useTour({ steps: [ /* ... */ ] });
-  return <button onClick={() => start()}>New feature walkthrough</button>;
-}
-```
-
----
-
-## API
-
-### `useTour(config)`
+`driver.js` is a bundled dependency — no separate install. Import the CSS once in your app entry:
 
 ```ts
-const { start, stop, next, prev, moveTo, isActive, currentStep } = useTour(config);
-```
-
-#### `TourConfig`
-
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `steps` | `TourStep[]` | — | **Required.** Array of tour steps. |
-| `showProgress` | `boolean` | `true` | Show step counter in the popover footer. |
-| `animate` | `boolean` | `true` | Animate transitions between steps. |
-| `overlayOpacity` | `number` | `0.75` | Overlay darkness (0–1). |
-| `allowClose` | `boolean` | `true` | Allow closing via Escape or overlay click. |
-| `overlayClass` | `string` | — | Extra CSS class on the overlay. |
-| `popoverClass` | `string` | — | Extra CSS class on every popover. |
-| `prevBtnText` | `string` | `"← Back"` | Previous button label. |
-| `nextBtnText` | `string` | `"Next →"` | Next button label. |
-| `doneBtnText` | `string` | `"Done"` | Done button label on the last step. |
-| `onStart` | `() => void` | — | Called when the tour starts. |
-| `onFinish` | `() => void` | — | Called when all steps are completed. |
-| `onSkip` | `() => void` | — | Called when the tour is dismissed early. |
-| `onStepChange` | `(index: number) => void` | — | Called on each step change. |
-
-#### `TourStep`
-
-| Prop | Type | Description |
-|---|---|---|
-| `target` | `string \| RefObject<Element>` | CSS selector or React ref of the element to highlight. Omit for a centred popover with no highlight. |
-| `title` | `string` | Popover heading. |
-| `content` | `string` | **Required.** Popover body text. |
-| `side` | `"top" \| "bottom" \| "left" \| "right"` | Which side of the element the popover appears on. |
-| `align` | `"start" \| "center" \| "end"` | Popover alignment relative to the element. |
-| `popoverClass` | `string` | Extra CSS class for this step's popover. |
-| `onBeforeHighlight` | `() => void` | Called just before this step highlights. |
-| `onAfterHighlight` | `() => void` | Called after this step is fully visible. |
-| `onDeselected` | `() => void` | Called when leaving this step. |
-
-#### `TourControls`
-
-| Member | Type | Description |
-|---|---|---|
-| `start` | `(stepIndex?: number) => void` | Start the tour, optionally from a specific step. |
-| `stop` | `() => void` | Immediately destroy the active tour. |
-| `next` | `() => void` | Advance to the next step. |
-| `prev` | `() => void` | Go back to the previous step. |
-| `moveTo` | `(index: number) => void` | Jump to any step by index. |
-| `isActive` | `boolean` | `true` while the tour is running. |
-| `currentStep` | `number` | Zero-based index of the highlighted step. |
-
----
-
-### `<TourProvider>`
-
-Optional context provider. Needed only when running multiple tours in the same app — it ensures only one is active at a time and exposes `activeTourId` to any component via `useTourContext()`.
-
-```tsx
-<TourProvider>
-  <App />
-</TourProvider>
-```
-
-### `useTourContext()`
-
-Read the active tour state from anywhere inside `<TourProvider>`.
-
-```tsx
-const { activeTourId } = useTourContext() ?? {};
+import "@oqlet/react-driver/driver.css";
 ```
 
 ---
 
-## Recipes
+## Features at a glance
 
-### Start from a specific step
+| Category | What's included |
+| --- | --- |
+| **Core** | `useTour`, `restart()`, `totalSteps`, `beforeNext/Prev`, `afterNext/Prev` |
+| **Interaction** | `advanceOn`, `canAdvance`, `autoAdvanceAfter`, `delayBefore`, `delayAfter` |
+| **Visibility** | `visibleWhen`, `popoverless`, `section`, `mobileOverrides` |
+| **Persistence** | `persist`, `version`, `persistProgress`, `showCount`, `showAfter` |
+| **Content** | JSX `title`/`content`, `renderPopover`, `stepsUrl` |
+| **Analytics** | `onStepEnter`, `onStepExit`, `useTourAnalytics`, `useTourHistory`, `adapters.*` |
+| **Registry** | `useRegisterTour`, `useTourControls`, `useTourSequence`, `useIsTourActive`, `useTourStep` |
+| **Components** | `TourBeacon`, `TourChecklist`, `TourTooltip` |
+| **Utilities** | `locales` (13 languages), `useStepRef`, `skipTour`, `hasSeenTour`, `createMockTour` |
+| **Config** | `keyboard`, `scrollBehavior`, `highlightPadding`, `waitForIdle`, `debug`, `onError` |
+
+---
+
+## Core usage
 
 ```tsx
-const { start } = useTour({ steps });
-<button onClick={() => start(2)}>Skip to step 3</button>
-```
-
-### Use a React ref as a target
-
-```tsx
-const ref = useRef<HTMLDivElement>(null);
-const { start } = useTour({
-  steps: [{ target: ref, title: "Here", content: "This element." }],
+const { start, stop, restart, next, prev, moveTo, isActive, currentStep, totalSteps } = useTour({
+  steps: [
+    { target: "#element", title: "Title", content: "Description." },
+  ],
 });
 ```
 
-### Programmatic navigation
+## Cross-route navigation
 
 ```tsx
-const { start, next, prev, moveTo } = useTour({ steps });
+const { start } = useTour({
+  steps: [
+    { target: "#product",     content: "Browse products." },
+    { target: "#add-to-cart", content: "Add it to your cart.",
+      beforeNext: () => navigate("/cart"),       // navigate on Next
+      afterNext:  () => setCartOpen(false) },    // cleanup after animation
+    { target: "#cart-item",   content: "Your item is here." },
+  ],
+  waitForTarget: 5000,
+});
 ```
 
-### Floating popover (no highlight)
-
-Omit `target` to show a centred popover without highlighting any element:
+## Action-driven tours
 
 ```tsx
-{ title: "Welcome!", content: "This is a floating intro." }
+const { start } = useTour({
+  steps: [
+    { target: "#menu-item",
+      content: "Click it or press Next to continue.",
+      advanceOn: "#menu-item",                   // element click = Next
+      beforeNext: () => setPanel("profile"),     // owns state change
+      afterNext:  () => setMenuOpen(false) },    // cleanup after animation
+    { target: "#panel-profile",
+      content: "Your profile settings." },
+  ],
+});
 ```
 
-### Custom styling
-
-Pass a `popoverClass` to theme individual steps or the whole tour:
+## Persistence & scheduling
 
 ```tsx
 useTour({
-  popoverClass: "my-tour-theme",
-  steps: [
-    { target: "#a", content: "Step A.", popoverClass: "step-a-override" },
-  ],
+  id:              "onboarding",
+  version:         "2.0",           // re-show when version changes
+  persist:         true,            // don't show again after completion
+  persistProgress: true,            // resume from last step on revisit
+  showCount:       3,               // show at most 3 times
+  showAfter:       { visits: 2, delay: 5000 },  // 5s after the 2nd visit
+  steps: [...],
 });
+```
+
+## Analytics
+
+```tsx
+import { adapters } from "@oqlet/react-driver";
+import posthog from "posthog-js";
+
+// Pre-wired PostHog / Segment / Mixpanel / Amplitude adapters
+useTour({ ...adapters.posthog(posthog, { tourId: "onboarding" }), steps: [...] });
+
+// Or custom analytics via hooks
+useTour({
+  onStepEnter: (i, { step }) => analytics.track("step_view", { step: i }),
+  onStepExit:  (i, { duration, reason }) => analytics.track("step_exit", { duration, reason }),
+  steps: [...],
+});
+```
+
+## TourBeacon & TourTooltip
+
+```tsx
+import { TourBeacon, TourTooltip } from "@oqlet/react-driver";
+
+// Pulsing dot — click to start a named tour
+useRegisterTour("feature-x", featureXConfig);
+<TourBeacon target="#new-feature" tourId="feature-x" />
+
+// Non-intrusive tooltip — no overlay, no darkening
+<TourTooltip target="#help-icon" content="Click for a guided tour." trigger="hover" />
+```
+
+## Locales
+
+```tsx
+import { locales } from "@oqlet/react-driver";
+
+// 13 built-in languages: en fr es de pt it nl ja zh ko ar ru hi
+useTour({ ...locales.fr, steps: [...] });
+```
+
+## Testing utilities
+
+```ts
+import { createMockTour } from "@oqlet/react-driver/testing";
+
+const mock = createMockTour({ isActive: true });
+vi.mock("@oqlet/react-driver", () => ({ useTour: () => mock }));
+expect(mock.start).toHaveBeenCalledWith(0);
+```
+
+## CDN / UMD
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@oqlet/react-driver/dist/react-driver.umd.js"></script>
+<script>
+  const { useTour } = ReactDriver;
+</script>
 ```
 
 ---
 
 ## Contributing
 
-Issues and pull requests are welcome. Please open an issue first for significant changes.
-
 ```bash
 git clone https://github.com/goutham-05/react-driver
 cd react-driver
 npm install
-npm test        # vitest — 19 tests
-npm run build   # tsup — ESM + CJS + .d.ts + .d.cts
+npm test        # vitest — 128 tests
+npm run build   # tsup — ESM + CJS + UMD + .d.ts + .d.cts
 ```
 
 ---

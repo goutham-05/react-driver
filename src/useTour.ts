@@ -141,6 +141,7 @@ export function useTour(config: TourConfig): TourControls {
   const advanceOnCleanupRef     = useRef<(() => void) | null>(null);
   const autoAdvanceTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
   const customPopoverRootRef    = useRef<{ unmount: () => void } | null>(null);
+  const keyboardCleanupRef      = useRef<(() => void) | null>(null);
   // Accessibility: remember which element had focus before the tour started
   // so we can restore it when the tour ends.
   const preTourFocusRef         = useRef<HTMLElement | null>(null);
@@ -168,6 +169,8 @@ export function useTour(config: TourConfig): TourControls {
   const stop = useCallback(() => {
     advanceOnCleanupRef.current?.();
     advanceOnCleanupRef.current = null;
+    keyboardCleanupRef.current?.();
+    keyboardCleanupRef.current = null;
     prevStepIdxRef.current = null;
     stepEnteredAtRef.current = null;
     exitReasonRef.current = null;
@@ -325,8 +328,11 @@ export function useTour(config: TourConfig): TourControls {
         doneBtnText: cfg.doneBtnText ?? "Done",
         // highlightPadding — space between element and overlay cutout.
         ...(cfg.highlightPadding !== undefined ? { stagePadding: cfg.highlightPadding } : {}),
-        // keyboard config — disable or remap keys.
-        ...(cfg.keyboard?.enabled === false ? { allowKeyboardControl: false } : {}),
+        // keyboard config — disable driver.js's built-in keyboard handling when
+        // we're overriding keys, so our listener is the sole handler.
+        ...(cfg.keyboard?.enabled === false || cfg.keyboard?.next || cfg.keyboard?.prev || cfg.keyboard?.close
+          ? { allowKeyboardControl: false }
+          : {}),
         // scrollBehavior maps to driver.js's smoothScroll option.
         ...(cfg.scrollBehavior === false
           ? { scrollIntoViewOptions: false as unknown as ScrollIntoViewOptions }
@@ -469,6 +475,8 @@ export function useTour(config: TourConfig): TourControls {
         onDestroyed: () => {
           advanceOnCleanupRef.current?.();
           advanceOnCleanupRef.current = null;
+          keyboardCleanupRef.current?.();
+          keyboardCleanupRef.current = null;
           prevStepIdxRef.current = null;
           stepEnteredAtRef.current = null;
           exitReasonRef.current = null;
@@ -491,6 +499,21 @@ export function useTour(config: TourConfig): TourControls {
       setIsActive(true);
       ctx?.setActiveTourId(tourId.current);
       cfg.onStart?.();
+      // Custom keyboard remapping — intercept before driver.js sees the key.
+      if (typeof window !== "undefined" && cfg.keyboard &&
+          (cfg.keyboard.next || cfg.keyboard.prev || cfg.keyboard.close)) {
+        const kb = cfg.keyboard;
+        const handleKey = (e: KeyboardEvent) => {
+          const d = driverRef.current;
+          if (!d) return;
+          if (kb.next  && e.key === kb.next)  { e.stopPropagation(); e.preventDefault(); advanceStep(d, d.getActiveIndex() ?? 0); }
+          if (kb.prev  && e.key === kb.prev)  { e.stopPropagation(); e.preventDefault(); retreatStep(d, d.getActiveIndex() ?? 0); }
+          if (kb.close && e.key === kb.close) { e.stopPropagation(); e.preventDefault(); d.destroy(); }
+        };
+        window.addEventListener("keydown", handleKey, true);
+        keyboardCleanupRef.current = () => window.removeEventListener("keydown", handleKey, true);
+      }
+
       // Accessibility: capture current focus so we can restore it on tour end.
       if (typeof document !== "undefined") {
         preTourFocusRef.current = document.activeElement as HTMLElement | null;
