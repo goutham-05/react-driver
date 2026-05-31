@@ -202,7 +202,12 @@ const ALL_SECTIONS: NavItem[] = NAV_GROUPS.flatMap(g => g.items);
 
 // ── Sidebar ───────────────────────────────────────────────────────────────────
 
-function Sidebar({ activeId, onClose }: { activeId: string; onClose?: () => void }) {
+function Sidebar({ activeId, onNavClick, onSelectId, onClose }: {
+  activeId: string;
+  onNavClick?: () => void;
+  onSelectId?: (id: string) => void;
+  onClose?: () => void;
+}) {
   const [query, setQuery] = useState("");
   const q = query.toLowerCase().trim();
 
@@ -249,7 +254,8 @@ function Sidebar({ activeId, onClose }: { activeId: string; onClose?: () => void
                 key={item.id}
                 href={`#${item.id}`}
                 onClick={onClose}
-                className={[
+                onClick={() => { onNavClick?.(); onSelectId?.(item.id); onClose?.(); }}
+              className={[
                   "flex items-center rounded-lg px-3 py-1.5 text-[13px] no-underline transition-all",
                   activeId === item.id
                     ? "bg-blue-50 font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
@@ -274,6 +280,18 @@ function Sidebar({ activeId, onClose }: { activeId: string; onClose?: () => void
 export default function DocsPage() {
   const [activeId, setActiveId] = useState(ALL_SECTIONS[0].id);
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Pause the observer while a nav-link scroll is in progress so the
+  // IntersectionObserver doesn't hijack the active section mid-animation.
+  const observerPausedRef = useRef(false);
+  const pauseTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const pauseObserver = () => {
+    observerPausedRef.current = true;
+    if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+    pauseTimerRef.current = setTimeout(() => {
+      observerPausedRef.current = false;
+    }, 1000); // resume after scroll animation settles (~600ms typical)
+  };
 
   // Active section tracking via IntersectionObserver
   useEffect(() => {
@@ -283,6 +301,7 @@ export default function DocsPage() {
 
     const observer = new IntersectionObserver(
       entries => {
+        if (observerPausedRef.current) return; // skip during nav-link scrolls
         const visible = entries
           .filter(e => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -292,7 +311,7 @@ export default function DocsPage() {
     );
 
     headings.forEach(el => observer.observe(el));
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current); };
   }, []);
 
   // Close mobile sidebar on Escape
@@ -340,7 +359,7 @@ export default function DocsPage() {
               </button>
             </div>
             <div className="h-[calc(100%-3rem)]">
-              <Sidebar activeId={activeId} onClose={() => setMobileOpen(false)} />
+              <Sidebar activeId={activeId} onNavClick={pauseObserver} onSelectId={setActiveId} onClose={() => setMobileOpen(false)} />
             </div>
           </div>
         </div>
@@ -351,7 +370,7 @@ export default function DocsPage() {
         {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
         <aside className="hidden w-60 shrink-0 lg:block">
           <div className="sticky top-14 h-[calc(100vh-3.5rem)] border-r border-gray-100 dark:border-zinc-800">
-            <Sidebar activeId={activeId} />
+            <Sidebar activeId={activeId} onNavClick={pauseObserver} onSelectId={setActiveId} />
           </div>
         </aside>
 
