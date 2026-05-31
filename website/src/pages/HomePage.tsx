@@ -156,7 +156,7 @@ export default function HomePage() {
             { value: "31",     label: "E2E tests",         sub: "Playwright"          },
             { value: "30+",    label: "API features",      sub: "hooks, components"   },
             { value: "13",     label: "built-in locales",  sub: "i18n ready"          },
-            { value: "4",      label: "analytics adapters",sub: "PostHog, Segment ···"},
+            { value: "4",      label: "analytics adapters",sub: "PostHog · Segment · Mixpanel · Amplitude"},
           ].map(s => (
             <div key={s.value} className="flex flex-col items-center text-center">
               <span className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{s.value}</span>
