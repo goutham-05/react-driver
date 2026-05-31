@@ -47,6 +47,16 @@ jobs:
       - name: Verify package contents
         run: npm pack --dry-run
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Install website dependencies
+        run: npm ci
+        working-directory: website
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
   release:
     name: Version bump and publish
     runs-on: ubuntu-latest
