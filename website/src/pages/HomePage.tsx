@@ -123,12 +123,47 @@ export default function HomePage() {
             </Link>
           </div>
 
+          {/* Trust badges */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            {[
+              "TypeScript-first",
+              "SSR safe",
+              "Zero peer deps",
+              "React 17 · 18 · 19",
+              "MIT license",
+            ].map(b => (
+              <span key={b} className="rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-semibold text-gray-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+                {b}
+              </span>
+            ))}
+          </div>
+
           {/* Install command */}
-          <div className="mt-8 inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 font-mono text-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mt-6 inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 font-mono text-sm dark:border-zinc-800 dark:bg-zinc-900">
             <span className="text-gray-400">$</span>
             <span className="text-gray-800 dark:text-zinc-200">npm install @oqlet/react-driver</span>
             <CopyButton text="npm install @oqlet/react-driver" />
           </div>
+        </div>
+      </section>
+
+      {/* ── Stats strip ───────────────────────────────────────────────────── */}
+      <section className="border-b border-gray-100 bg-gray-50/60 dark:border-zinc-900 dark:bg-zinc-900/40 px-6 py-10">
+        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
+          {[
+            { value: "~12 KB", label: "gzipped bundle",   sub: "ESM + CSS"          },
+            { value: "128",    label: "unit tests",        sub: "vitest"              },
+            { value: "31",     label: "E2E tests",         sub: "Playwright"          },
+            { value: "30+",    label: "API features",      sub: "hooks, components"   },
+            { value: "13",     label: "built-in locales",  sub: "i18n ready"          },
+            { value: "4",      label: "analytics adapters",sub: "PostHog, Segment ···"},
+          ].map(s => (
+            <div key={s.value} className="flex flex-col items-center text-center">
+              <span className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{s.value}</span>
+              <span className="mt-0.5 text-[13px] font-semibold text-gray-600 dark:text-zinc-300">{s.label}</span>
+              <span className="text-[11px] text-gray-400 dark:text-zinc-600">{s.sub}</span>
+            </div>
+          ))}
         </div>
       </section>
 
