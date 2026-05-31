@@ -203,9 +203,13 @@ describe("renderPopover", () => {
     act(() => screen.getByText("start").click());
 
     const cfg = driverFactoryMock.mock.calls[0][0];
-    act(() => cfg.onHighlighted(undefined, undefined, { state: { activeIndex: 0 }, driver: mockDriverInstance }));
+    // renderPopover now uses onPopoverRender (fires before animation, zero flash)
+    // instead of onHighlighted (fired after 400ms animation = flash)
+    act(() => cfg.onPopoverRender(
+      { wrapper: popoverEl, title: document.createElement("div"), description: document.createElement("div") },
+      { state: { activeIndex: 0 }, driver: mockDriverInstance }
+    ));
 
-    // Verify the component was called and received the correct step index
     expect(CustomPopover).toHaveBeenCalled();
     const receivedProps = CustomPopover.mock.calls[0][0];
     expect(receivedProps.stepIndex).toBe(0);

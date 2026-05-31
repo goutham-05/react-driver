@@ -341,6 +341,33 @@ export function useTour(config: TourConfig): TourControls {
           : {}
         ),
 
+        // onPopoverRender fires synchronously when driver.js creates the popover DOM —
+        // before any animation starts. Injecting renderPopover here means the custom
+        // component is visible from frame 0 with zero flash of driver.js's default UI.
+        ...(cfg.renderPopover ? {
+          onPopoverRender: (popover: any, opts: any) => {
+            const driverIdx = opts?.state?.activeIndex ?? 0;
+            const stepCfg   = originalStepAt(driverIdx);
+            if (!stepCfg) return;
+            popover.wrapper.innerHTML = "";
+            customPopoverRootRef.current?.unmount();
+            const root = createRoot(popover.wrapper);
+            customPopoverRootRef.current = root;
+            flushSync(() => root.render(
+              React.createElement(configRef.current.renderPopover!, {
+                step:       stepCfg,
+                stepIndex:  driverIdx,
+                totalSteps: indexMapRef.current.length,
+                next:  () => driverRef.current?.moveNext(),
+                prev:  () => driverRef.current?.movePrevious(),
+                stop:  () => stop(),
+                isFirst: driverRef.current?.isFirstStep() ?? false,
+                isLast:  driverRef.current?.isLastStep()  ?? false,
+              })
+            ));
+          },
+        } : {}),
+
         onHighlightStarted: (_el, _step, { state }) => {
           const driverIdx = state.activeIndex ?? 0;
           setCurrentStep(driverIdx);
@@ -377,29 +404,6 @@ export function useTour(config: TourConfig): TourControls {
           }
           if (stepCfg) {
             configRef.current.onStepEnter?.(driverIdx, { enteredAt: stepEnteredAtRef.current, step: stepCfg });
-          }
-
-          // renderPopover — replace driver.js's default popover with a React component.
-          if (configRef.current.renderPopover && stepCfg) {
-            const popoverEl = document.getElementById("driver-popover-content");
-            if (popoverEl) {
-              customPopoverRootRef.current?.unmount();
-              popoverEl.innerHTML = "";
-              const root = createRoot(popoverEl);
-              customPopoverRootRef.current = root;
-              flushSync(() => root.render(
-                React.createElement(configRef.current.renderPopover!, {
-                  step:       stepCfg,
-                  stepIndex:  driverIdx,
-                  totalSteps: indexMapRef.current.length,
-                  next:  () => driverRef.current?.moveNext(),
-                  prev:  () => driverRef.current?.movePrevious(),
-                  stop:  () => stop(),
-                  isFirst: driverRef.current?.isFirstStep() ?? false,
-                  isLast:  driverRef.current?.isLastStep()  ?? false,
-                })
-              ));
-            }
           }
 
           stepCfg?.onAfterHighlight?.();
