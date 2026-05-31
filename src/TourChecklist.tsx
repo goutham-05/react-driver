@@ -118,3 +118,4 @@ export function TourChecklist({
     </div>
   );
 }
+TourChecklist.displayName = 'TourChecklist';

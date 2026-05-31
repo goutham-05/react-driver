@@ -50,6 +50,19 @@ export interface TourStep {
    */
   visibleWhen?: () => boolean;
   /**
+   * Wait N ms after the user clicks Next before the tour advances. Useful when
+   * the highlighted element has an exit animation you want to finish first.
+   *
+   * @example
+   * delayAfter: 300   // let a 250ms fade-out finish before moving on
+   */
+  delayAfter?: number;
+  /**
+   * Extra padding (px) between the element and the overlay cutout for this step.
+   * Overrides the tour-level `highlightPadding` config for this step only.
+   */
+  highlightPadding?: number;
+  /**
    * Delay (ms) between the element being highlighted and the popover appearing.
    * Useful when the target element enters the DOM via a CSS transition —
    * the highlight shows instantly while the popover waits for the animation.
@@ -131,6 +144,57 @@ export interface TourConfig {
    * `useRegisterTour`, or `useTourControls`.
    */
   id?: string;
+  /**
+   * Show the tour at most N times before it auto-marks as completed. Different
+   * from `persist` (all-or-nothing) — useful for re-engagement hints that
+   * should surface a few times before giving up.
+   *
+   * @example
+   * showCount: 3   // show up to 3 times then stop
+   */
+  showCount?: number;
+  /**
+   * Automatically start the tour when the specified condition is met.
+   * All conditions must pass. The tour still respects `persist` / `showCount`.
+   *
+   * @example
+   * showAfter: { delay: 5000 }                // 5 s after mount
+   * showAfter: { visits: 3 }                   // on the 3rd page visit
+   * showAfter: { date: "2026-09-01" }          // from a release date
+   * showAfter: { visits: 2, delay: 3000 }      // 3 s after the 2nd visit
+   */
+  showAfter?: {
+    /** Wait N ms after the component mounts before starting. */
+    delay?: number;
+    /** Only start from the Nth page-visit onward (tracked in localStorage). */
+    visits?: number;
+    /** Don't start before this date. */
+    date?: string | Date;
+  };
+  /**
+   * Global extra padding (px) between every highlighted element and the
+   * overlay cutout. Override per-step with `TourStep.highlightPadding`.
+   */
+  highlightPadding?: number;
+  /**
+   * Configure or disable keyboard navigation.
+   *
+   * @example
+   * keyboard: { enabled: false }                    // disable keyboard entirely
+   * keyboard: { next: "ArrowRight", prev: "ArrowLeft" }
+   */
+  keyboard?: {
+    enabled?: boolean;
+    next?: string;
+    prev?: string;
+    close?: string;
+  };
+  /**
+   * Wait for the browser to be idle before starting the tour. Pass `true` to
+   * use a 2 s default timeout, or a number (ms) for a custom timeout.
+   * Falls back to `setTimeout(0)` in environments without `requestIdleCallback`.
+   */
+  waitForIdle?: boolean | number;
   /**
    * Version tag for this tour. When `persist` is set and the version changes,
    * the stored completion flag is automatically invalidated — users who completed

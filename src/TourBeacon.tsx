@@ -115,3 +115,4 @@ if (typeof document !== "undefined" && typeof window !== "undefined") {
     document.head.appendChild(style);
   }
 }
+TourBeacon.displayName = 'TourBeacon';

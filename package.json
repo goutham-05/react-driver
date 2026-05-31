@@ -15,6 +15,7 @@
       "require": "./dist/index.js"
     },
     "./driver.css": "./dist/driver.css",
+    "./umd": "./dist/react-driver.umd.js",
     "./testing": {
       "types":   "./dist/testing.d.ts",
       "import":  "./dist/testing.mjs",

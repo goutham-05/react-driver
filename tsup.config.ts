@@ -20,4 +20,18 @@ export default defineConfig([
     sourcemap: true,
     external: ["react", "react-dom"],
   },
+  {
+    name: "UMD Build",
+    entry: { "react-driver": "src/index.ts" },
+    format: ["iife"],
+    globalName: "ReactDriver",
+    outExtension: () => ({ js: ".umd.js" }),
+    dts: false,
+    minify: true,
+    sourcemap: false,
+    external: ["react", "react-dom"],
+    esbuildOptions(opts) {
+      opts.globalName = "ReactDriver";
+    },
+  },
 ]);

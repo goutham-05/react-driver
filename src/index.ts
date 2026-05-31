@@ -1,6 +1,7 @@
 export { TourProvider }                                       from "./TourProvider";
 export { TourBeacon }                                         from "./TourBeacon";
 export { TourChecklist }                                      from "./TourChecklist";
+export { TourTooltip }                                        from "./TourTooltip";
 export { useTour }                                            from "./useTour";
 export { useRegisterTour, useTourControls }                   from "./useRegisterTour";
 export { useIsTourActive }                                    from "./useIsTourActive";
@@ -11,6 +12,9 @@ export { TourContext, useTourContext }                        from "./TourContex
 export { waitForElement }                                     from "./waitForElement";
 export { hasSeenTour, skipTour, clearTourHistory }            from "./persistence";
 export { locales }                                            from "./locales";
+export { adapters }                                           from "./adapters";
+export { useTourHistory }                                     from "./useTourHistory";
+export { useTourAnalytics }                                   from "./useTourAnalytics";
 
 export type {
   TourStep,
@@ -20,3 +24,5 @@ export type {
   StepExitReason,
   PopoverRenderProps,
 } from "./types";
+export type { TourHistoryRecord }     from "./persistence";
+export type { TourAnalyticsSummary, StepRecord } from "./useTourAnalytics";

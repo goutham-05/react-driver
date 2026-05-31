@@ -42,3 +42,4 @@ export function TourProvider({ children }: TourProviderProps) {
     </TourContext.Provider>
   );
 }
+TourProvider.displayName = 'TourProvider';

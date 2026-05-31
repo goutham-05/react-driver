@@ -6,7 +6,10 @@ import { driver } from "driver.js";
 import type { Config, DriveStep } from "driver.js";
 import { useTourContext } from "./TourContext";
 import { waitForElement } from "./waitForElement";
-import { hasSeenTour, markTourSeen, saveProgress, loadProgress, clearProgress } from "./persistence";
+import {
+  hasSeenTour, markTourSeen, saveProgress, loadProgress, clearProgress,
+  getVisitCount, incrementVisitCount, getShownCount, incrementShownCount,
+} from "./persistence";
 import type { TourConfig, TourControls, TourStep, StepExitReason } from "./types";
 
 let tourCounter = 0;
@@ -73,6 +76,12 @@ function buildDriverSteps(steps: TourStep[], breakpoint = 768): {
         side:        step.side,
         align:       step.align,
         ...(step.popoverClass && { popoverClass: step.popoverClass }),
+        // per-step highlightPadding via onHighlightStarted callback workaround.
+        ...(step.highlightPadding !== undefined ? {
+          onHighlightStarted: (_el: Element | undefined, _step: DriveStep, { config: c }: any) => {
+            (c as any).stagePadding = step.highlightPadding;
+          },
+        } : {}),
         // popoverless: spotlight the element with no popover at all.
         ...(step.popoverless ? {
           onPopoverRender: (popover: any) => { popover.wrapper.style.display = "none"; },
@@ -212,6 +221,25 @@ export function useTour(config: TourConfig): TourControls {
         }
       }
 
+      // showCount check — skip if already shown N or more times.
+      if (cfg.id && cfg.showCount !== undefined) {
+        const shown = getShownCount(cfg.id);
+        if (shown >= cfg.showCount) return;
+        incrementShownCount(cfg.id);
+      }
+
+      // waitForIdle — defer start to browser idle time.
+      if (cfg.waitForIdle) {
+        const timeout = typeof cfg.waitForIdle === "number" ? cfg.waitForIdle : 2000;
+        await new Promise<void>(resolve => {
+          if (typeof requestIdleCallback !== "undefined") {
+            requestIdleCallback(() => resolve(), { timeout });
+          } else {
+            setTimeout(resolve, 0);
+          }
+        });
+      }
+
       // Resume from saved progress if persistProgress is set.
       if (cfg.persistProgress && cfg.id) {
         const persist = cfg.persist ?? true;
@@ -255,6 +283,10 @@ export function useTour(config: TourConfig): TourControls {
             const ok = await Promise.resolve(stepCfg.canAdvance());
             if (!ok) return;
           }
+          // delayAfter — wait before advancing (e.g. let exit animation finish)
+          if (stepCfg?.delayAfter) {
+            await new Promise<void>(r => setTimeout(r, stepCfg.delayAfter));
+          }
           clearAutoAdvanceTimer();
           exitReasonRef.current = "next";
           await waitForTarget(nextStepCfg?.target);
@@ -291,6 +323,10 @@ export function useTour(config: TourConfig): TourControls {
         prevBtnText: cfg.prevBtnText ?? "← Back",
         nextBtnText: cfg.nextBtnText ?? "Next →",
         doneBtnText: cfg.doneBtnText ?? "Done",
+        // highlightPadding — space between element and overlay cutout.
+        ...(cfg.highlightPadding !== undefined ? { stagePadding: cfg.highlightPadding } : {}),
+        // keyboard config — disable or remap keys.
+        ...(cfg.keyboard?.enabled === false ? { allowKeyboardControl: false } : {}),
         // scrollBehavior maps to driver.js's smoothScroll option.
         ...(cfg.scrollBehavior === false
           ? { scrollIntoViewOptions: false as unknown as ScrollIntoViewOptions }
@@ -468,9 +504,34 @@ export function useTour(config: TourConfig): TourControls {
   const next    = useCallback(() => driverRef.current?.moveNext(),     []);
   const prev    = useCallback(() => driverRef.current?.movePrevious(), []);
   const moveTo  = useCallback((idx: number) => driverRef.current?.moveTo(idx), []);
-  // restart: start(0) already destroys any running instance internally.
-  // It does NOT fire onSkip/onFinish — a restart is not a dismissal.
   const restart = useCallback(() => start(0), [start]);
+
+  // showAfter: track visits and auto-start when conditions are met.
+  useEffect(() => {
+    const cfg = configRef.current;
+    if (!cfg.showAfter && !cfg.id) return;
+
+    // Increment visit count on mount.
+    if (cfg.id && cfg.showAfter?.visits !== undefined) {
+      incrementVisitCount(cfg.id);
+    }
+
+    if (!cfg.showAfter) return;
+    const { delay = 0, visits, date } = cfg.showAfter;
+
+    // Date condition
+    if (date && new Date() < new Date(date)) return;
+
+    // Visits condition
+    if (visits !== undefined && cfg.id) {
+      const count = getVisitCount(cfg.id);
+      if (count < visits) return;
+    }
+
+    const timer = setTimeout(() => { start(0); }, delay);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     return () => {
