@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   useTour, TourTooltip, TourChecklist,
-  useTourAnalytics, locales,
+  useTourAnalytics, locales, clearTourHistory,
 } from "@oqlet/react-driver";
 
 // ── Code block ────────────────────────────────────────────────────────────────
@@ -188,8 +188,8 @@ function CustomPopoverDemo() {
           </span>
           <button onClick={s} style={{ background: "transparent", border: "none", color: "#64748b", cursor: "pointer", fontSize: 18, lineHeight: 1 }}>×</button>
         </div>
-        {step.title && <div style={{ fontWeight: 700, color: "#f1f5f9", marginBottom: 6, fontSize: 15 }}>{step.title as string}</div>}
-        <div style={{ color: "#94a3b8", fontSize: 13, lineHeight: 1.6 }}>{step.content as string}</div>
+        {step.title && <div style={{ fontWeight: 700, color: "#f1f5f9", marginBottom: 6, fontSize: 15 }}>{step.title}</div>}
+        <div style={{ color: "#94a3b8", fontSize: 13, lineHeight: 1.6 }}>{step.content}</div>
         <button onClick={next} style={{ marginTop: 16, width: "100%", background: "#3b82f6", color: "#fff", border: "none", borderRadius: 10, padding: "10px 0", fontWeight: 700, cursor: "pointer", fontSize: 13 }}>
           {isLast ? "✓ Done" : "Continue →"}
         </button>
@@ -380,19 +380,21 @@ function TooltipDemo() {
 }
 
 function ChecklistDemo() {
-  const steps = [
-    { target: "#cl-profile",  title: "Complete profile",    content: "Add your name and avatar." },
-    { target: "#cl-team",     title: "Invite your team",    content: "Add collaborators."        },
-    { target: "#cl-connect",  title: "Connect an account",  content: "Link your third-party apps." },
-    { target: "#cl-export",   title: "Export first report", content: "Download your data."       },
+  // IDs are defined alongside targets so there's no string manipulation needed.
+  const items = [
+    { id: "cl-profile", title: "Complete profile",    content: "Add your name and avatar."      },
+    { id: "cl-team",    title: "Invite your team",    content: "Add collaborators."              },
+    { id: "cl-connect", title: "Connect an account",  content: "Link your third-party apps."    },
+    { id: "cl-export",  title: "Export first report", content: "Download your data."            },
   ];
-  const { start, stop, moveTo, currentStep, isActive, totalSteps } = useTour({ steps, showProgress: true });
+  const steps = items.map(({ id, title, content }) => ({ target: `#${id}`, title, content }));
+  const { start, stop, moveTo, currentStep, isActive } = useTour({ steps, showProgress: true });
   return (
     <div className="grid grid-cols-2 gap-4 items-start">
       <div className="space-y-3">
-        {steps.map((s, i) => (
-          <div key={i} id={s.target.slice(1)} className="rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm font-medium dark:border-zinc-700 dark:bg-zinc-800/50">
-            {s.title}
+        {items.map(item => (
+          <div key={item.id} id={item.id} className="rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm font-medium dark:border-zinc-700 dark:bg-zinc-800/50">
+            {item.title}
           </div>
         ))}
         <div className="flex gap-2 pt-1">
@@ -421,7 +423,7 @@ function PersistDemo() {
     onStart: () => setShown(n => n + 1),
   });
   const clear = () => {
-    localStorage.removeItem(`react-driver:shown:${KEY}`);
+    clearTourHistory(KEY); // library API — no internal key format needed
     setShown(0);
   };
   return (
@@ -448,8 +450,8 @@ function AnalyticsDemo() {
       { target: "#an-b", title: "Step 2", content: "onStepExit records how long you stayed.", side: "bottom" },
       { target: "#an-c", title: "Step 3", content: "Complete or skip to see the summary.", side: "bottom" },
     ],
-    onFinish: () => {},
-    onSkip: () => {},
+    onFinish: () => console.log("[analytics demo] finished", summary),
+    onSkip:   () => console.log("[analytics demo] skipped",  summary),
   });
   return (
     <div className="space-y-5">
