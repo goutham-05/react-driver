@@ -209,6 +209,14 @@ function Sidebar({ activeId, onNavClick, onSelectId, onClose }: {
   onClose?: () => void;
 }) {
   const [query, setQuery] = useState("");
+  const navRef = useRef<HTMLElement>(null);
+
+  // Keep the active item visible inside the sidebar scroll container.
+  useEffect(() => {
+    if (!navRef.current) return;
+    const el = navRef.current.querySelector<HTMLElement>(`[data-section-id="${activeId}"]`);
+    el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [activeId]);
   const q = query.toLowerCase().trim();
 
   const filtered = q
@@ -240,7 +248,7 @@ function Sidebar({ activeId, onNavClick, onSelectId, onClose }: {
       </div>
 
       {/* Nav groups */}
-      <nav className="flex-1 overflow-y-auto px-3 py-3">
+      <nav ref={navRef} className="flex-1 overflow-y-auto px-3 py-3">
         {filtered.length === 0 && (
           <p className="px-3 py-4 text-center text-sm text-gray-400 dark:text-zinc-600">No results for "{query}"</p>
         )}
@@ -253,7 +261,7 @@ function Sidebar({ activeId, onNavClick, onSelectId, onClose }: {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                onClick={onClose}
+                data-section-id={item.id}
                 onClick={() => { onNavClick?.(); onSelectId?.(item.id); onClose?.(); }}
               className={[
                   "flex items-center rounded-lg px-3 py-1.5 text-[13px] no-underline transition-all",
