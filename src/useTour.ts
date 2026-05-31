@@ -82,9 +82,21 @@ function buildDriverSteps(steps: TourStep[], breakpoint = 768): {
             (c as any).stagePadding = step.highlightPadding;
           },
         } : {}),
-        // popoverless: spotlight the element with no popover at all.
+        // popoverless: hide title/description but keep the navigation footer
+        // as a compact pill so the user can still advance or close the tour.
         ...(step.popoverless ? {
-          onPopoverRender: (popover: any) => { popover.wrapper.style.display = "none"; },
+          onPopoverRender: (popover: any) => {
+            popover.title.style.display       = "none";
+            popover.description.style.display = "none";
+            popover.closeButton.style.display = "none";
+            Object.assign(popover.wrapper.style, {
+              background:   "rgba(0,0,0,0.75)",
+              borderRadius: "100px",
+              padding:      "4px 6px",
+              minWidth:     "unset",
+              boxShadow:    "0 4px 16px rgba(0,0,0,0.4)",
+            });
+          },
         } :
         // delayBefore: hide the popover wrapper until the delay expires.
         step.delayBefore ? {
