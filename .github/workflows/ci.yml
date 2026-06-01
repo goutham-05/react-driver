@@ -54,6 +54,10 @@ jobs:
         run: npm ci
         working-directory: website
 
+      - name: Build website
+        run: npm run build
+        working-directory: website
+
       - name: Run E2E tests
         run: npm run test:e2e
 

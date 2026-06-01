@@ -4,26 +4,27 @@
   "description": "Schema-driven, plug-and-play guided tours for React — built on driver.js.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.cts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
     "./driver.css": "./dist/driver.css",
     "./umd": "./dist/react-driver.umd.js",
     "./testing": {
-      "types":   "./dist/testing.d.ts",
+      "types": "./dist/testing.d.cts",
       "import":  "./dist/testing.mjs",
       "require": "./dist/testing.js"
     }
   },
   "scripts": {
     "build": "tsup && node scripts/copy-css.mjs",
+    "vercel-build": "npm --prefix website ci && npm --prefix website run build",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
