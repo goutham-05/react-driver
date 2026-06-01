@@ -27,7 +27,7 @@ function CodeBlock({ code }: { code: string }) {
 function DemoPane({ children }: { children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">
+      <div className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">
         Live demo
       </div>
       {children}
@@ -135,7 +135,7 @@ function JSXContentDemo() {
         title: (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ fontSize: 20 }}>🎉</span>
-            <span style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 800 }}>
+            <span style={{ color: "#2563eb", fontWeight: 800 }}>
               Styled title
             </span>
           </div>
@@ -202,7 +202,7 @@ function JSXContentDemo() {
   return (
     <div className="space-y-4">
       {/* Three distinct target elements */}
-      <div id="jsx-hero" className="rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-violet-50 p-4 dark:border-blue-800/50 dark:from-blue-950/30 dark:to-violet-950/30">
+      <div id="jsx-hero" className="rounded-xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/50 dark:bg-blue-950/20">
         <div className="text-sm font-semibold text-blue-900 dark:text-blue-200">Step 1 — styled title &amp; pill tags</div>
         <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">Click ▶ to see a gradient title and tag cloud</div>
       </div>
@@ -639,14 +639,13 @@ const GROUPS: ExampleGroup[] = [
   {
     title: "Content & display",
     items: [
-      { id: "jsx",           label: "JSX content",        desc: "React nodes in title & content — gradients, stats, code blocks, any component",  component: <JSXContentDemo />,   code: `useTour({
+      { id: "jsx",           label: "JSX content",        desc: "React nodes in title & content — styled text, stats, code blocks, any component",  component: <JSXContentDemo />,   code: `useTour({
   steps: [
     {
       target: "#hero",
-      // Gradient title using inline styles
+      // Styled title using inline color
       title: (
-        <span style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
-                        WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+        <span style={{ color: "#2563eb", fontWeight: 800 }}>
           Styled title
         </span>
       ),
@@ -870,14 +869,14 @@ function ExamplesNav({ activeId, query, onQuery, onSelect, onClose }: ExamplesNa
       <nav ref={navRef} className="flex-1 overflow-y-auto px-3 py-3">
         {filtered.map(g => (
           <div key={g.title} className="mb-4">
-            <div className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">{g.title}</div>
+            <div className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">{g.title}</div>
             {g.items.map(item => (
               <button key={item.id} data-item-id={item.id}
                 onClick={() => { onSelect(item.id); onClose?.(); }}
                 className={["flex w-full items-start rounded-lg px-3 py-2 text-left transition-all", activeId === item.id ? "bg-blue-50 dark:bg-blue-950/40" : "hover:bg-gray-100 dark:hover:bg-zinc-800"].join(" ")}>
                 <div>
                   <div className={`text-[13px] font-semibold ${activeId === item.id ? "text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-zinc-300"}`}>{item.label}</div>
-                  <div className="text-[11px] text-gray-400 dark:text-zinc-600 leading-tight mt-0.5">{item.desc}</div>
+                  <div className="text-[11px] text-gray-600 dark:text-zinc-600 leading-tight mt-0.5">{item.desc}</div>
                 </div>
               </button>
             ))}
@@ -938,7 +937,7 @@ export default function ExamplesPage() {
 
       {/* Content */}
       <main className="min-w-0 flex-1 px-6 py-10 lg:px-10">
-        <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">
+        <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">
           {GROUPS.find(g => g.items.some(i => i.id === activeId))?.title}
         </div>
         <h1 className="mb-1 text-3xl font-black text-gray-900 dark:text-white">{active.label}</h1>
@@ -951,7 +950,7 @@ export default function ExamplesPage() {
           {/* Code */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Code</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">Code</div>
               <button onClick={() => setShowCode(s => !s)} className="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">
                 {showCode ? "Hide code ↑" : "Show full code ↓"}
               </button>

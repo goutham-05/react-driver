@@ -34,10 +34,10 @@ function PropTable({ rows }: { rows: { prop: string; type: string; default?: str
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50 dark:border-zinc-800 dark:bg-zinc-900/80">
-            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Prop</th>
-            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Type</th>
-            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Default</th>
-            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">Description</th>
+            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-400">Prop</th>
+            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-400">Type</th>
+            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-400">Default</th>
+            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-400">Description</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 dark:divide-zinc-800/50">
@@ -45,8 +45,8 @@ function PropTable({ rows }: { rows: { prop: string; type: string; default?: str
             <tr key={r.prop} className="bg-white hover:bg-gray-50/50 dark:bg-zinc-950 dark:hover:bg-zinc-900/50 transition-colors">
               <td className="px-4 py-3 font-mono text-[13px] font-semibold text-blue-700 dark:text-blue-400 whitespace-nowrap">{r.prop}</td>
               <td className="px-4 py-3 font-mono text-[11px] text-violet-700 dark:text-violet-400 whitespace-nowrap">{r.type}</td>
-              <td className="px-4 py-3 font-mono text-[11px] text-gray-500 dark:text-zinc-500 whitespace-nowrap">{r.default ?? "—"}</td>
-              <td className="px-4 py-3 text-[13px] text-gray-600 dark:text-zinc-400">{r.desc}</td>
+              <td className="px-4 py-3 font-mono text-[11px] text-gray-600 dark:text-zinc-500 whitespace-nowrap">{r.default ?? "—"}</td>
+              <td className="px-4 py-3 text-[13px] text-gray-700 dark:text-zinc-400">{r.desc}</td>
             </tr>
           ))}
         </tbody>
@@ -229,7 +229,7 @@ function Sidebar({ activeId, onNavClick, onSelectId, onClose }: {
       {/* Search */}
       <div className="shrink-0 border-b border-gray-100 px-4 pb-3 pt-4 dark:border-zinc-800">
         <div className="relative">
-          <svg className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-gray-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-gray-500 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input
@@ -254,7 +254,7 @@ function Sidebar({ activeId, onNavClick, onSelectId, onClose }: {
         )}
         {filtered.map(group => (
           <div key={group.title} className="mb-4">
-            <div className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">
+            <div className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">
               {group.title}
             </div>
             {group.items.map(item => (
@@ -267,7 +267,7 @@ function Sidebar({ activeId, onNavClick, onSelectId, onClose }: {
                   "flex items-center rounded-lg px-3 py-1.5 text-[13px] no-underline transition-all",
                   activeId === item.id
                     ? "bg-blue-50 font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100",
+                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100",
                 ].join(" ")}
               >
                 {activeId === item.id && (
@@ -391,7 +391,7 @@ export default function DocsPage() {
               API Reference
             </div>
             <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">Documentation</h1>
-            <p className="mt-2 text-lg text-gray-500 dark:text-zinc-400">
+            <p className="mt-2 text-lg text-gray-700 dark:text-zinc-400">
               Complete API reference for <IC>@oqlet/react-driver</IC>.
             </p>
           </div>
@@ -422,7 +422,7 @@ function App() {
 
           {/* ── useTour ───────────────────────────────────────────────────── */}
           <H2 id="use-tour">useTour(config)</H2>
-          <p className="mb-4 text-gray-600 dark:text-zinc-400">
+          <p className="mb-4 text-gray-700 dark:text-zinc-400">
             The primary hook. Define your tour once and get back controls to drive it from anywhere in the component tree.
             Place it in a component that doesn't unmount during the tour (e.g. a layout component) for cross-route tours.
           </p>
@@ -430,7 +430,7 @@ function App() {
 
           {/* ── TourStep ──────────────────────────────────────────────────── */}
           <H2 id="tour-step">TourStep</H2>
-          <p className="mb-4 text-gray-600 dark:text-zinc-400">Each element of the <IC>steps</IC> array.</p>
+          <p className="mb-4 text-gray-700 dark:text-zinc-400">Each element of the <IC>steps</IC> array.</p>
 
           <H3 id="tour-step-targeting">Targeting</H3>
           <PropTable rows={[
@@ -463,7 +463,7 @@ function App() {
 
           {/* ── TourConfig ────────────────────────────────────────────────── */}
           <H2 id="tour-config">TourConfig</H2>
-          <p className="mb-4 text-gray-600 dark:text-zinc-400">Options passed to <IC>useTour</IC>.</p>
+          <p className="mb-4 text-gray-700 dark:text-zinc-400">Options passed to <IC>useTour</IC>.</p>
           <PropTable rows={[
             { prop: "steps",          type: "TourStep[]",           desc: "Required. Array of tour steps." },
             { prop: "id",             type: "string",               desc: "Unique identifier. Required for persist and useRegisterTour/useTourControls." },
@@ -486,7 +486,7 @@ function App() {
 
           {/* ── TourControls ──────────────────────────────────────────────── */}
           <H2 id="tour-controls">TourControls</H2>
-          <p className="mb-4 text-gray-600 dark:text-zinc-400">The object returned by <IC>useTour</IC>.</p>
+          <p className="mb-4 text-gray-700 dark:text-zinc-400">The object returned by <IC>useTour</IC>.</p>
           <PropTable rows={[
             { prop: "start",       type: "(stepIndex?: number) => void", desc: "Start the tour, optionally from a specific step index." },
             { prop: "stop",        type: "() => void",    desc: "Immediately destroy the active tour." },
@@ -501,7 +501,7 @@ function App() {
 
           {/* ── Conditional steps ─────────────────────────────────────────── */}
           <H2 id="conditional-steps">Conditional steps</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Add <IC>visibleWhen: () =&gt; boolean</IC> to any step. Evaluated fresh on every <IC>start()</IC> call — invisible steps are filtered out before driver.js sees them, so <IC>currentStep</IC> and <IC>totalSteps</IC> always reflect what's actually visible.
           </p>
           <Code code={`useTour({
@@ -519,7 +519,7 @@ function App() {
 
           {/* ── canAdvance ────────────────────────────────────────────────── */}
           <H2 id="can-advance">canAdvance guard</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Gate the Next button on a condition. If it returns (or resolves to) <IC>false</IC> the step stays active silently — use your own UI to communicate why.
           </p>
           <Code code={`{ target: "#signup-form",
@@ -531,7 +531,7 @@ function App() {
 
           {/* ── autoAdvanceAfter ──────────────────────────────────────────── */}
           <H2 id="auto-advance">autoAdvanceAfter</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Automatically advance after N milliseconds. Any user interaction still works — the timer is cancelled the moment the step changes.
           </p>
           <Code code={`{ target: "#hero-banner", title: "Welcome",
@@ -541,7 +541,7 @@ function App() {
 
           {/* ── restart() ─────────────────────────────────────────────────── */}
           <H2 id="restart">restart()</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Resets the tour to step 0 without firing <IC>onSkip</IC> or <IC>onFinish</IC>. Useful for demos, preview modes, or letting users replay onboarding.
           </p>
           <Code code={`const { start, restart } = useTour({ steps });
@@ -550,7 +550,7 @@ function App() {
 
           {/* ── JSX content ───────────────────────────────────────────────── */}
           <H2 id="jsx-content">JSX content</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Both <IC>title</IC> and <IC>content</IC> accept any <IC>React.ReactNode</IC> — images, videos, buttons, styled text, anything you can render in React.
           </p>
           <Code code={`{ target: "#hero",
@@ -565,7 +565,7 @@ function App() {
 
           {/* ── renderPopover ─────────────────────────────────────────────── */}
           <H2 id="render-popover">renderPopover</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Replace driver.js's default popover with your own React component. Receives <IC>{"{ step, stepIndex, totalSteps, next, prev, stop, isFirst, isLast }"}</IC>.
           </p>
           <Code code={`useTour({
@@ -612,7 +612,7 @@ function App() {
 
           {/* ── Cross-route ───────────────────────────────────────────────── */}
           <H2 id="cross-route">Cross-route navigation</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Mount <IC>useTour</IC> in a persistent layout component (outside <IC>&lt;Routes&gt;</IC>) so the driver instance is never destroyed during navigation.
           </p>
           <Code code={`function Layout() {
@@ -632,7 +632,7 @@ function App() {
 
           {/* ── Action-driven ─────────────────────────────────────────────── */}
           <H2 id="action-driven">Action-driven tours</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             <IC>advanceOn</IC> makes any element act as the Next button. The library owns the click via <IC>stopPropagation</IC> so state changes happen only through <IC>beforeNext</IC>.
           </p>
           <Code code={`{
@@ -648,7 +648,7 @@ function App() {
 
           {/* ── Persistence ───────────────────────────────────────────────── */}
           <H2 id="persistence">Tour persistence</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Set <IC>id</IC> and <IC>persist</IC> to automatically skip a tour after first completion.
           </p>
           <Code code={`useTour({ id: "onboarding-v1", persist: true, steps: [...] });
@@ -660,28 +660,28 @@ clearTourHistory();                // reset all tours`} />
 
           {/* ── version ───────────────────────────────────────────────────── */}
           <H2 id="version">version</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Pair with <IC>id + persist</IC>. When you increment the version string, users who completed an older version will see the updated tour again.
           </p>
           <Code code={`useTour({ id: "onboarding", version: "2.0", persist: true, steps: [...] });`} />
 
           {/* ── persistProgress ───────────────────────────────────────────── */}
           <H2 id="persist-progress">persistProgress</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Resume the tour from the last step the user reached. Cleared automatically on tour finish.
           </p>
           <Code code={`useTour({ id: "onboarding", persistProgress: true, steps: [...] });`} />
 
           {/* ── showCount ─────────────────────────────────────────────────── */}
           <H2 id="show-count">showCount</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Show a tour at most N times. Different from <IC>persist</IC> (all-or-nothing) — useful for re-engagement hints.
           </p>
           <Code code={`useTour({ id: "feature-hint", showCount: 3, steps: [...] });`} />
 
           {/* ── showAfter ─────────────────────────────────────────────────── */}
           <H2 id="show-after">showAfter — scheduling</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Automatically start the tour when a condition is met. All conditions must pass together.
           </p>
           <Code code={`useTour({
@@ -695,7 +695,7 @@ clearTourHistory();                // reset all tours`} />
 
           {/* ── skipTour ──────────────────────────────────────────────────── */}
           <H2 id="skip-tour">skipTour(id)</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Mark a tour as seen without completing it. Useful in admin panels or a "Skip onboarding" button.
           </p>
           <Code code={`import { skipTour } from "@oqlet/react-driver";
@@ -704,7 +704,7 @@ clearTourHistory();                // reset all tours`} />
 
           {/* ── useIsTourActive ───────────────────────────────────────────── */}
           <H2 id="is-tour-active">useIsTourActive()</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Returns <IC>true</IC> when any tour inside the nearest <IC>&lt;TourProvider&gt;</IC> is running. Gate competing UI elements.
           </p>
           <Code code={`function ChatBubble() {
@@ -715,7 +715,7 @@ clearTourHistory();                // reset all tours`} />
 
           {/* ── useTourStep ───────────────────────────────────────────────── */}
           <H2 id="tour-step-hook">useTourStep(stepIndex)</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Know from any component whether a specific step is active. Useful for highlighting nav items. Requires <IC>&lt;TourProvider&gt;</IC>.
           </p>
           <Code code={`function NavItem({ label, step }: { label: string; step: number }) {
@@ -725,7 +725,7 @@ clearTourHistory();                // reset all tours`} />
 
           {/* ── Named registry ────────────────────────────────────────────── */}
           <H2 id="named-registry">Named tour registry</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Register a tour by name so any component can start it — no prop drilling. Requires <IC>&lt;TourProvider&gt;</IC>.
           </p>
           <Code code={`// Register in your layout
@@ -739,7 +739,7 @@ function HelpButton() {
 
           {/* ── useTourSequence ───────────────────────────────────────────── */}
           <H2 id="tour-sequence">useTourSequence</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Chain named tours end-to-end. When one finishes the next starts automatically. Requires <IC>&lt;TourProvider&gt;</IC>.
           </p>
           <Code code={`useRegisterTour("setup",     setupConfig);
@@ -750,7 +750,7 @@ const { startSequence } = useTourSequence(["setup", "dashboard"]);
 
           {/* ── useTourHistory ────────────────────────────────────────────── */}
           <H2 id="tour-history">useTourHistory()</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Reads all stored tour records from localStorage. Useful for progress indicators.
           </p>
           <Code code={`const { records, clearAll } = useTourHistory();
@@ -759,7 +759,7 @@ const inProgress = records.filter(r => r.currentStep !== undefined);`} />
 
           {/* ── useTourAnalytics ──────────────────────────────────────────── */}
           <H2 id="tour-analytics">useTourAnalytics()</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Wraps <IC>useTour</IC> and aggregates step-timing data into a session summary.
           </p>
           <Code code={`const { controls, summary } = useTourAnalytics({
@@ -773,7 +773,7 @@ const inProgress = records.filter(r => r.currentStep !== undefined);`} />
 
           {/* ── TourBeacon ────────────────────────────────────────────────── */}
           <H2 id="tour-beacon">TourBeacon</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             A pulsing dot anchored to any element. Clicking starts the specified named tour. Requires <IC>&lt;TourProvider&gt;</IC>.
           </p>
           <Code code={`<TourBeacon
@@ -784,7 +784,7 @@ const inProgress = records.filter(r => r.currentStep !== undefined);`} />
 
           {/* ── TourChecklist ─────────────────────────────────────────────── */}
           <H2 id="tour-checklist">TourChecklist</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             A side-panel progress list. Steps with a <IC>section</IC> prop are grouped under headers. Clicking a step jumps to it.
           </p>
           <Code code={`<TourChecklist
@@ -797,7 +797,7 @@ const inProgress = records.filter(r => r.currentStep !== undefined);`} />
 
           {/* ── TourTooltip ───────────────────────────────────────────────── */}
           <H2 id="tour-tooltip">TourTooltip</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             A lightweight, non-intrusive tooltip — no overlay, no darkening. Shows on hover, click, or always.
           </p>
           <Code code={`<TourTooltip target="#help-icon" content="Click for a tour." trigger="hover" />
@@ -813,7 +813,7 @@ const inProgress = records.filter(r => r.currentStep !== undefined);`} />
 
           {/* ── TourProvider ──────────────────────────────────────────────── */}
           <H2 id="tour-provider">TourProvider</H2>
-          <p className="mb-4 text-gray-600 dark:text-zinc-400">
+          <p className="mb-4 text-gray-700 dark:text-zinc-400">
             Optional. Wrap your app root when you have multiple tours or want named registry + <IC>useIsTourActive</IC>. Single-tour apps work fine without it.
           </p>
           <Code code={`<TourProvider>
@@ -839,7 +839,7 @@ const { activeTourId } = useTourContext() ?? {};`} />
 
           {/* ── Adapters ──────────────────────────────────────────────────── */}
           <H2 id="adapters">Analytics adapters</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Pre-wired configs for PostHog, Segment, Mixpanel, and Amplitude. Automatically tracks all tour events.
           </p>
           <Code code={`import { adapters } from "@oqlet/react-driver";
@@ -852,14 +852,14 @@ useTour({ ...adapters.posthog(posthog, { tourId: "onboarding" }), steps: [...] }
 
           {/* ── debug ─────────────────────────────────────────────────────── */}
           <H2 id="debug">debug mode</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Logs every step transition, duration, and reason to the console. Never set in production.
           </p>
           <Code code={`useTour({ debug: process.env.NODE_ENV === "development", steps: [...] });`} />
 
           {/* ── onError ───────────────────────────────────────────────────── */}
           <H2 id="on-error">onError</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Called on recoverable errors — <IC>stepsUrl</IC> fetch failures, <IC>waitForElement</IC> timeouts, and more.
           </p>
           <Code code={`useTour({
@@ -869,7 +869,7 @@ useTour({ ...adapters.posthog(posthog, { tourId: "onboarding" }), steps: [...] }
 
           {/* ── stepsUrl ──────────────────────────────────────────────────── */}
           <H2 id="steps-url">stepsUrl</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Fetch step config from an API at runtime. Marketing / product can update copy without a code deploy.
           </p>
           <Code code={`useTour({
@@ -881,7 +881,7 @@ useTour({ ...adapters.posthog(posthog, { tourId: "onboarding" }), steps: [...] }
 
           {/* ── Locales ───────────────────────────────────────────────────── */}
           <H2 id="locales">Locales</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Pre-built locale configs for 13 languages. Available: <IC>en fr es de pt it nl ja zh ko ar ru hi</IC>.
           </p>
           <Code code={`import { locales } from "@oqlet/react-driver";
@@ -891,7 +891,7 @@ useTour({ ...locales.fr, steps: [...] });
 
           {/* ── useStepRef ────────────────────────────────────────────────── */}
           <H2 id="step-ref">useStepRef(id)</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Refactor-safe element targeting. Safe to rename IDs and classes — the tour always finds the element via a stable <IC>data-tour-ref</IC> attribute.
           </p>
           <Code code={`const { ref, target } = useStepRef("save-btn");
@@ -903,7 +903,7 @@ useTour({ ...locales.fr, steps: [...] });
 
           {/* ── waitForElement ────────────────────────────────────────────── */}
           <H2 id="wait-for-element">waitForElement</H2>
-          <p className="mb-4 text-gray-600 dark:text-zinc-400">
+          <p className="mb-4 text-gray-700 dark:text-zinc-400">
             The utility the library uses internally — exported so you can use it in custom <IC>beforeNext</IC> callbacks.
           </p>
           <Code code={`import { waitForElement } from "@oqlet/react-driver";
@@ -915,7 +915,7 @@ beforeNext: async () => {
 
           {/* ── Testing ───────────────────────────────────────────────────── */}
           <H2 id="testing">Testing utilities</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             Import from <IC>@oqlet/react-driver/testing</IC> to stub <IC>TourControls</IC> — no driver.js setup required.
           </p>
           <Code code={`import { createMockTour } from "@oqlet/react-driver/testing";
@@ -927,7 +927,7 @@ expect(mockTour.start).toHaveBeenCalledWith(0);`} />
 
           {/* ── CDN / UMD ─────────────────────────────────────────────────── */}
           <H2 id="cdn">CDN / UMD</H2>
-          <p className="mb-3 text-gray-600 dark:text-zinc-400">
+          <p className="mb-3 text-gray-700 dark:text-zinc-400">
             A minified UMD bundle is included for script-tag usage or CodePen / StackBlitz prototypes.
           </p>
           <Code lang="html" code={`<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>

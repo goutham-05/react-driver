@@ -86,7 +86,7 @@ export default function HomePage() {
     <div className="bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100">
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-gray-100 dark:border-zinc-900 px-6 pb-20 pt-24 text-center">
+      <section className="relative overflow-hidden border-b border-gray-200 dark:border-zinc-900 px-6 pb-20 pt-24 text-center">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-[500px] w-[800px] rounded-full bg-blue-500/5 blur-3xl dark:bg-blue-500/10" />
         </div>
@@ -104,12 +104,12 @@ export default function HomePage() {
 
           <h1 className="mb-4 text-5xl font-black tracking-tight leading-tight">
             Guided tours that{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="text-blue-600 dark:text-blue-400">
               just work
             </span>
           </h1>
 
-          <p className="mx-auto mb-8 max-w-xl text-lg text-gray-500 dark:text-zinc-400">
+          <p className="mx-auto mb-8 max-w-xl text-lg text-gray-600 dark:text-zinc-400">
             Schema-driven, plug-and-play guided tours for React. Define steps as data.
             Cross-route navigation, action-driven interactions, zero driver.js boilerplate.
           </p>
@@ -132,15 +132,15 @@ export default function HomePage() {
               "React 17 · 18 · 19",
               "MIT license",
             ].map(b => (
-              <span key={b} className="rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-semibold text-gray-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+              <span key={b} className="rounded-full border border-gray-300 bg-white px-3 py-1 text-[11px] font-semibold text-gray-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
                 {b}
               </span>
             ))}
           </div>
 
           {/* Install command */}
-          <div className="mt-6 inline-flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 font-mono text-sm dark:border-zinc-800 dark:bg-zinc-900">
-            <span className="text-gray-400">$</span>
+          <div className="mt-6 inline-flex items-center gap-3 rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 font-mono text-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <span className="text-gray-500">$</span>
             <span className="text-gray-800 dark:text-zinc-200">npm install @oqlet/react-driver</span>
             <CopyButton text="npm install @oqlet/react-driver" />
           </div>
@@ -148,7 +148,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Stats strip ───────────────────────────────────────────────────── */}
-      <section className="border-b border-gray-100 bg-gray-50/60 dark:border-zinc-900 dark:bg-zinc-900/40 px-6 py-10">
+      <section className="border-b border-gray-200 bg-gray-50 dark:border-zinc-900 dark:bg-zinc-900/40 px-6 py-10">
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
           {[
             { value: "~12 KB", label: "gzipped bundle",   sub: "ESM + CSS"          },
@@ -161,7 +161,7 @@ export default function HomePage() {
             <div key={s.value} className="flex flex-col items-center text-center">
               <span className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{s.value}</span>
               <span className="mt-0.5 text-[13px] font-semibold text-gray-600 dark:text-zinc-300">{s.label}</span>
-              <span className="text-[11px] text-gray-400 dark:text-zinc-600">{s.sub}</span>
+              <span className="text-[11px] text-gray-500 dark:text-zinc-600">{s.sub}</span>
             </div>
           ))}
         </div>
@@ -171,12 +171,12 @@ export default function HomePage() {
       <section className="mx-auto max-w-5xl px-6 py-20">
         <div className="mb-3 text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Quick start</div>
         <h2 className="mb-2 text-3xl font-bold">Up and running in 60 seconds</h2>
-        <p className="mb-8 text-gray-500 dark:text-zinc-400">One hook. Describe your steps as a plain array. Done.</p>
+        <p className="mb-8 text-gray-700 dark:text-zinc-400">One hook. Describe your steps as a plain array. Done.</p>
         <CodeBlock code={QUICK_START} />
       </section>
 
       {/* ── Features ──────────────────────────────────────────────────────── */}
-      <section className="border-y border-gray-100 bg-gray-50/50 dark:border-zinc-900 dark:bg-zinc-900/30 px-6 py-20">
+      <section className="border-y border-gray-200 bg-gray-50 dark:border-zinc-900 dark:bg-zinc-900/30 px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <div className="mb-3 text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Features</div>
           <h2 className="mb-10 text-3xl font-bold">Everything you need, nothing you don't</h2>
@@ -185,7 +185,7 @@ export default function HomePage() {
               <div key={f.title} className="rounded-xl border border-gray-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
                 <div className="mb-3 text-2xl">{f.icon}</div>
                 <div className="mb-1.5 font-bold">{f.title}</div>
-                <p className="text-sm leading-relaxed text-gray-500 dark:text-zinc-400">{f.body}</p>
+                <p className="text-sm leading-relaxed text-gray-700 dark:text-zinc-400">{f.body}</p>
               </div>
             ))}
           </div>
@@ -198,7 +198,7 @@ export default function HomePage() {
           <div>
             <div className="mb-3 text-xs font-bold uppercase tracking-widest text-violet-600 dark:text-violet-400">Cross-route navigation</div>
             <h2 className="mb-3 text-3xl font-bold">Tours that span multiple pages</h2>
-            <p className="mb-4 text-gray-500 dark:text-zinc-400">
+            <p className="mb-4 text-gray-700 dark:text-zinc-400">
               Use <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm dark:bg-zinc-800">beforeNext</code> to
               navigate with React Router between tour steps. The library waits for the next
               step's target to appear in the DOM before advancing — no manual timing required.
@@ -212,13 +212,13 @@ export default function HomePage() {
       </section>
 
       {/* ── Action-driven ─────────────────────────────────────────────────── */}
-      <section className="border-y border-gray-100 bg-gray-50/50 dark:border-zinc-900 dark:bg-zinc-900/30 px-6 py-20">
+      <section className="border-y border-gray-200 bg-gray-50 dark:border-zinc-900 dark:bg-zinc-900/30 px-6 py-20">
         <div className="mx-auto max-w-5xl grid grid-cols-2 items-center gap-12">
           <CodeBlock code={ACTION_TOUR} />
           <div>
             <div className="mb-3 text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Action-driven tours</div>
             <h2 className="mb-3 text-3xl font-bold">Real interactions, not fake overlays</h2>
-            <p className="mb-4 text-gray-500 dark:text-zinc-400">
+            <p className="mb-4 text-gray-700 dark:text-zinc-400">
               <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm dark:bg-zinc-800">advanceOn</code> makes
               any element a "Next" trigger. When clicked, the library owns the interaction,
               fires <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm dark:bg-zinc-800">beforeNext</code>,
@@ -235,7 +235,7 @@ export default function HomePage() {
       <section className="px-6 py-20 text-center">
         <div className="mx-auto max-w-lg">
           <h2 className="mb-3 text-3xl font-bold">Ready to ship?</h2>
-          <p className="mb-8 text-gray-500 dark:text-zinc-400">Install in 30 seconds. Full docs and live examples included.</p>
+          <p className="mb-8 text-gray-700 dark:text-zinc-400">Install in 30 seconds. Full docs and live examples included.</p>
           <div className="flex justify-center gap-3">
             <Link to="/docs" className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white no-underline hover:bg-blue-700">
               Read the docs

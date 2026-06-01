@@ -32,7 +32,7 @@ const newStep = (): StepDraft => ({
 
 const INPUT  = "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100";
 const SELECT = `${INPUT} cursor-pointer`;
-const LABEL  = "mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-zinc-400";
+const LABEL  = "mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-700 dark:text-zinc-400";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -116,23 +116,23 @@ function DemoArea() {
       <div className="space-y-3">
         <div id="pg-nav" className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
           <span className="text-sm font-bold text-gray-600 dark:text-zinc-300">⬡ App</span>
-          <span className="text-[11px] font-mono text-gray-400">#pg-nav</span>
+          <span className="text-[11px] font-mono text-gray-600">#pg-nav</span>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <div id="pg-feature-a" className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
             <div className="mb-1 text-lg">⚡</div>
             <div className="text-xs font-bold">Feature A</div>
-            <div className="text-[10px] text-gray-400 font-mono">#pg-feature-a</div>
+            <div className="text-[10px] text-gray-500 font-mono">#pg-feature-a</div>
           </div>
           <div id="pg-feature-b" className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
             <div className="mb-1 text-lg">🔒</div>
             <div className="text-xs font-bold">Feature B</div>
-            <div className="text-[10px] text-gray-400 font-mono">#pg-feature-b</div>
+            <div className="text-[10px] text-gray-500 font-mono">#pg-feature-b</div>
           </div>
           <div id="pg-feature-c" className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
             <div className="mb-1 text-lg">📊</div>
             <div className="text-xs font-bold">Feature C</div>
-            <div className="text-[10px] text-gray-400 font-mono">#pg-feature-c</div>
+            <div className="text-[10px] text-gray-500 font-mono">#pg-feature-c</div>
           </div>
         </div>
         <div id="pg-cta" className="rounded-xl border border-blue-200 bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white shadow-sm dark:border-blue-700">
@@ -190,7 +190,7 @@ export default function PlaygroundPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
-      <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Interactive</div>
+      <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">Interactive</div>
       <h1 className="mb-2 text-4xl font-black">Playground</h1>
       <p className="mb-8 text-lg text-gray-500 dark:text-zinc-400">
         Build a tour visually. The demo area below is the live target — hit ▶ Run tour to preview instantly.
@@ -201,7 +201,7 @@ export default function PlaygroundPage() {
         {/* ── Left: Step builder ────────────────────────────────────────── */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Steps ({steps.length})</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">Steps ({steps.length})</span>
             <div className="flex gap-2">
               {isActive && <button onClick={stop} className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-100 dark:border-red-800/50 dark:bg-red-950/20 dark:text-red-400">✕ Stop</button>}
               <button onClick={() => start()} className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors ${isActive ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-blue-600 text-white hover:bg-blue-700"}`}>
@@ -256,7 +256,7 @@ export default function PlaygroundPage() {
 
           {/* Tour config */}
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
-            <div className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Tour config</div>
+            <div className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">Tour config</div>
             <div className="space-y-3">
               <Toggle value={cfg.showProgress} onChange={v => updateCfg("showProgress", v)} label="Show progress" />
               <div>
@@ -305,7 +305,7 @@ export default function PlaygroundPage() {
 
       {/* ── Feature highlights ────────────────────────────────────────────── */}
       <div className="mt-12">
-        <div className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">More features to explore</div>
+        <div className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-zinc-500">More features to explore</div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {[
             { icon: "🖱️", title: "advanceOn",       body: "Element click = Next" },
@@ -318,7 +318,7 @@ export default function PlaygroundPage() {
             <div key={f.title} className="rounded-xl border border-gray-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
               <div className="mb-1.5 text-xl">{f.icon}</div>
               <div className="mb-0.5 text-xs font-bold text-gray-800 dark:text-zinc-200">{f.title}</div>
-              <p className="text-[11px] text-gray-500 dark:text-zinc-500">{f.body}</p>
+              <p className="text-[11px] text-gray-600 dark:text-zinc-500">{f.body}</p>
             </div>
           ))}
         </div>

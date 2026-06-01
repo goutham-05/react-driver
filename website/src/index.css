@@ -88,7 +88,7 @@
 .avatar-wrapper  { @apply relative; }
 .avatar-btn      { @apply flex h-[34px] w-[34px] cursor-pointer items-center justify-center rounded-full border-2 border-blue-400 bg-blue-600 text-xs font-bold text-white; }
 .app-body        { @apply p-5; }
-.welcome-banner  { @apply mb-5 flex items-center justify-between rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-green-50 px-6 py-5 dark:border-blue-900/50 dark:from-blue-950/30 dark:to-green-950/30; }
+.welcome-banner  { @apply mb-5 flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50 px-6 py-5 dark:border-blue-900/50 dark:bg-blue-950/20; }
 .welcome-title   { @apply mb-1 text-base font-bold; }
 .welcome-sub     { @apply text-sm text-gray-500 dark:text-zinc-400; }
 .dash-stats      { @apply mb-5 grid grid-cols-4 gap-3; }
