@@ -368,27 +368,35 @@ export function useTour(config: TourConfig): TourControls {
         // onPopoverRender fires synchronously when driver.js creates the popover DOM —
         // before any animation starts. Injecting renderPopover here means the custom
         // component is visible from frame 0 with zero flash of driver.js's default UI.
+        // Wrapped in try/catch so a future driver.js DOM structure change fails
+        // gracefully via onError rather than crashing the whole tour.
         ...(cfg.renderPopover ? {
           onPopoverRender: (popover: any, opts: any) => {
-            const driverIdx = opts?.state?.activeIndex ?? 0;
-            const stepCfg   = originalStepAt(driverIdx);
-            if (!stepCfg) return;
-            popover.wrapper.innerHTML = "";
-            customPopoverRootRef.current?.unmount();
-            const root = createRoot(popover.wrapper);
-            customPopoverRootRef.current = root;
-            flushSync(() => root.render(
-              React.createElement(configRef.current.renderPopover!, {
-                step:       stepCfg,
-                stepIndex:  driverIdx,
-                totalSteps: indexMapRef.current.length,
-                next:  () => driverRef.current?.moveNext(),
-                prev:  () => driverRef.current?.movePrevious(),
-                stop:  () => stop(),
-                isFirst: driverRef.current?.isFirstStep() ?? false,
-                isLast:  driverRef.current?.isLastStep()  ?? false,
-              })
-            ));
+            try {
+              const driverIdx = opts?.state?.activeIndex ?? 0;
+              const stepCfg   = originalStepAt(driverIdx);
+              if (!stepCfg || !popover?.wrapper) return;
+              popover.wrapper.innerHTML = "";
+              customPopoverRootRef.current?.unmount();
+              const root = createRoot(popover.wrapper);
+              customPopoverRootRef.current = root;
+              flushSync(() => root.render(
+                React.createElement(configRef.current.renderPopover!, {
+                  step:       stepCfg,
+                  stepIndex:  driverIdx,
+                  totalSteps: indexMapRef.current.length,
+                  next:  () => driverRef.current?.moveNext(),
+                  prev:  () => driverRef.current?.movePrevious(),
+                  stop:  () => stop(),
+                  isFirst: driverRef.current?.isFirstStep() ?? false,
+                  isLast:  driverRef.current?.isLastStep()  ?? false,
+                })
+              ));
+            } catch (e) {
+              const err = e instanceof Error ? e : new Error(String(e));
+              configRef.current.onError?.(err, "renderPopover");
+              console.error("[react-driver] renderPopover injection failed:", err.message);
+            }
           },
         } : {}),
 
