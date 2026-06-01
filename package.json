@@ -6,7 +6,10 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "llms.txt"
   ],
   "exports": {
     ".": {
@@ -82,5 +85,5 @@
   "bugs": {
     "url": "https://github.com/goutham-05/react-driver/issues"
   },
-  "homepage": "https://github.com/goutham-05/react-driver#readme"
+  "homepage": "https://www.react-driver.com/"
 }

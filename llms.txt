@@ -1,0 +1,269 @@
+# ReactDriver
+
+ReactDriver is a schema-driven guided tour library for React.
+
+Package: `@oqlet/react-driver`
+Repository: `https://github.com/goutham-05/react-driver`
+Website: `https://www.react-driver.com/`
+npm: `https://www.npmjs.com/package/@oqlet/react-driver`
+License: MIT
+
+ReactDriver is built on `driver.js`. It adds React hooks, JSX content, TypeScript configuration, cross-route lifecycle hooks, persistence, analytics adapters, tour registration, beacons, tooltips, checklists, and testing utilities.
+
+## Install
+
+```bash
+npm install @oqlet/react-driver
+```
+
+Import CSS once:
+
+```ts
+import "@oqlet/react-driver/driver.css";
+```
+
+Peer dependencies:
+
+```bash
+npm install react react-dom
+```
+
+## Minimal Usage
+
+```tsx
+import { useTour, type TourStep } from "@oqlet/react-driver";
+import "@oqlet/react-driver/driver.css";
+
+const steps: TourStep[] = [
+  {
+    target: "#create-project",
+    title: "Create a project",
+    content: "Start a new project from here.",
+  },
+  {
+    target: "#invite-team",
+    title: "Invite your team",
+    content: "Bring collaborators into the workspace.",
+  },
+];
+
+export function StartTourButton() {
+  const tour = useTour({
+    id: "onboarding",
+    steps,
+    persist: true,
+  });
+
+  return <button onClick={() => tour.start()}>Start tour</button>;
+}
+```
+
+## Main Exports
+
+```ts
+import {
+  TourProvider,
+  TourBeacon,
+  TourChecklist,
+  TourTooltip,
+  useTour,
+  useRegisterTour,
+  useTourControls,
+  useIsTourActive,
+  useTourStep,
+  useTourSequence,
+  useStepRef,
+  useTourHistory,
+  useTourAnalytics,
+  waitForElement,
+  hasSeenTour,
+  skipTour,
+  clearTourHistory,
+  locales,
+  adapters,
+} from "@oqlet/react-driver";
+
+import type {
+  TourStep,
+  TourConfig,
+  TourControls,
+  PopoverRenderProps,
+  StepExitReason,
+} from "@oqlet/react-driver";
+```
+
+Testing:
+
+```ts
+import { createMockTour } from "@oqlet/react-driver/testing";
+```
+
+## TourStep
+
+`TourStep` describes one step in a tour.
+
+- `target?: string | RefObject<Element | null>`: CSS selector or React ref for the highlighted element.
+- `title?: ReactNode`: popover title.
+- `content: ReactNode`: required popover body.
+- `side?: "top" | "bottom" | "left" | "right"`: popover side.
+- `align?: "start" | "center" | "end"`: popover alignment.
+- `popoverClass?: string`: extra class for this step.
+- `popoverless?: boolean`: highlight without a popover.
+- `section?: string`: group label for `TourChecklist`.
+- `mobileOverrides?: Partial<TourStep>`: overrides below `TourConfig.breakpoint`.
+- `visibleWhen?: () => boolean`: skip the step when false.
+- `delayBefore?: number`: delay before showing the popover.
+- `delayAfter?: number`: delay before advancing.
+- `highlightPadding?: number`: per-step overlay cutout padding.
+- `canAdvance?: () => boolean | Promise<boolean>`: block Next until true.
+- `autoAdvanceAfter?: number`: advance after N milliseconds.
+- `advanceOn?: string`: click selector that advances the step.
+- `beforeNext?: () => void | Promise<void>`: run before next navigation.
+- `beforePrev?: () => void | Promise<void>`: run before previous navigation.
+- `afterNext?: () => void`: run after the next step settles.
+- `afterPrev?: () => void`: run after the previous step settles.
+
+## TourConfig
+
+`TourConfig` is passed to `useTour`.
+
+- `steps: TourStep[]`: required tour steps.
+- `id?: string`: required for persistence and registry usage.
+- `persist?: boolean | "session"`: remember completed tours.
+- `persistProgress?: boolean`: resume from the last reached step.
+- `version?: string`: invalidate old persisted completion when changed.
+- `showCount?: number`: show at most N times.
+- `showAfter?: { delay?: number; visits?: number; date?: string | Date }`: schedule auto-start.
+- `stepsUrl?: string`: fetch steps from an endpoint.
+- `stepsTransform?: (data: unknown) => TourStep[]`: map remote steps.
+- `breakpoint?: number`: mobile override breakpoint.
+- `keyboard?: { enabled?: boolean; next?: string; prev?: string; close?: string }`: keyboard controls.
+- `waitForIdle?: boolean | number`: start after browser idle time.
+- `waitForTarget?: number`: timeout while waiting for route-created targets.
+- `scrollBehavior?: "smooth" | "instant" | false`: target scroll behavior.
+- `showProgress?: boolean`: show step count.
+- `animate?: boolean`: animate step transitions.
+- `overlayOpacity?: number`: overlay darkness from 0 to 1.
+- `allowClose?: boolean`: allow Escape/overlay close.
+- `renderPopover?: FC<PopoverRenderProps>`: custom popover renderer.
+- `onBeforeStart?: () => boolean | Promise<boolean>`: abort start by returning false.
+- `onError?: (error: Error, context: string) => void`: handle recoverable errors.
+- `debug?: boolean`: log transitions.
+- `onStart?: () => void`: tour started.
+- `onFinish?: () => void`: tour completed.
+- `onSkip?: () => void`: tour dismissed.
+- `onStepChange?: (stepIndex: number) => void`: current step changed.
+- `onStepEnter?: (stepIndex, meta) => void`: analytics when a step is visible.
+- `onStepExit?: (stepIndex, meta) => void`: analytics when leaving a step.
+
+## TourControls
+
+`useTour` returns:
+
+- `start(stepIndex?: number): void`
+- `stop(): void`
+- `restart(): void`
+- `next(): void`
+- `prev(): void`
+- `moveTo(stepIndex: number): void`
+- `onComplete(cb): () => void`
+- `isActive: boolean`
+- `currentStep: number`
+- `totalSteps: number`
+
+## Cross-Route Tours
+
+Use `beforeNext` or `beforePrev` to navigate, then ReactDriver waits for the next target:
+
+```tsx
+const tour = useTour({
+  waitForTarget: 7000,
+  steps: [
+    {
+      target: "#product-card",
+      title: "Product",
+      content: "Start here.",
+    },
+    {
+      target: "#cart-summary",
+      title: "Cart",
+      content: "The cart route has rendered.",
+      beforeNext: () => navigate("/cart"),
+    },
+  ],
+});
+```
+
+## Global Tours
+
+Use `TourProvider`, `useRegisterTour`, and `useTourControls`:
+
+```tsx
+function App() {
+  return (
+    <TourProvider>
+      <Dashboard />
+      <HelpMenu />
+    </TourProvider>
+  );
+}
+
+function Dashboard() {
+  useRegisterTour("dashboard", {
+    steps: [{ target: "#stats", content: "Metrics live here." }],
+  });
+}
+
+function HelpMenu() {
+  const tour = useTourControls("dashboard");
+  return <button onClick={() => tour?.start()}>Replay tour</button>;
+}
+```
+
+## Analytics
+
+Built-in adapters:
+
+- `adapters.posthog(posthog, { tourId })`
+- `adapters.segment(window.analytics, { tourId })`
+- `adapters.mixpanel(mixpanel, { tourId })`
+- `adapters.amplitude(amplitude, { tourId })`
+
+Custom analytics:
+
+```tsx
+useTour({
+  steps,
+  onStart: () => analytics.track("Tour Started"),
+  onFinish: () => analytics.track("Tour Completed"),
+  onSkip: () => analytics.track("Tour Skipped"),
+  onStepEnter: (index, { step }) => analytics.track("Tour Step Viewed", { index, step }),
+  onStepExit: (index, { duration, reason }) => analytics.track("Tour Step Exited", { index, duration, reason }),
+});
+```
+
+## Localization
+
+`locales` includes button labels for:
+
+`en`, `fr`, `es`, `de`, `pt`, `it`, `nl`, `ja`, `zh`, `ko`, `ar`, `ru`, `hi`
+
+Usage:
+
+```tsx
+useTour({
+  ...locales.fr,
+  steps,
+});
+```
+
+## Notes for AI Assistants
+
+- Always import `@oqlet/react-driver/driver.css` once.
+- Use `id` when using persistence, history, or global registration.
+- For route transitions, put navigation in `beforeNext` or `beforePrev`.
+- Use `waitForTarget` when the next target appears after navigation.
+- Use `canAdvance` when the user must complete an action before continuing.
+- Use `advanceOn` when a real click should move the tour forward.
+- Use `renderPopover` to integrate with a design system.
+- Use `createMockTour` from `@oqlet/react-driver/testing` in unit tests.
