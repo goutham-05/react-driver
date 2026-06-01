@@ -131,13 +131,24 @@ function JSXContentDemo() {
   const { start } = useTour({
     steps: [
       {
-        target: "#jsx-badge",
-        title: <span style={{ color: "#3b82f6", fontWeight: 700 }}>✨ Rich content</span>,
+        target: "#jsx-hero",
+        title: (
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 20 }}>🎉</span>
+            <span style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 800 }}>
+              Styled title
+            </span>
+          </div>
+        ),
         content: (
           <div>
-            <p style={{ marginBottom: 8 }}>Both <code>title</code> and <code>content</code> accept any React node.</p>
+            <p style={{ marginBottom: 10, lineHeight: 1.6 }}>
+              Both <code style={{ background: "#f1f5f9", padding: "1px 5px", borderRadius: 4, fontSize: 12 }}>title</code> and{" "}
+              <code style={{ background: "#f1f5f9", padding: "1px 5px", borderRadius: 4, fontSize: 12 }}>content</code>{" "}
+              accept any <strong>React node</strong> — gradients, components, anything.
+            </p>
             <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-              {["React","JSX","Images","Video"].map(t => (
+              {["React nodes","Styled text","Images","Video","Tables","Code"].map(t => (
                 <span key={t} style={{ background: "#eff6ff", color: "#1d4ed8", borderRadius: 999, padding: "2px 8px", fontSize: 11, fontWeight: 600 }}>{t}</span>
               ))}
             </div>
@@ -145,13 +156,68 @@ function JSXContentDemo() {
         ),
         side: "bottom",
       },
+      {
+        target: "#jsx-stats",
+        title: "📊 Embed live data",
+        content: (
+          <div>
+            <p style={{ marginBottom: 10, fontSize: 13, color: "#64748b" }}>Popovers can render charts, tables, or any UI component.</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {[["↑ 24%","Growth","#22c55e"],["1,284","Users","#3b82f6"],["$48k","Revenue","#8b5cf6"],["99.9%","Uptime","#f59e0b"]].map(([v, l, c]) => (
+                <div key={l} style={{ background: "#f8fafc", borderRadius: 10, padding: "10px 12px", borderLeft: `3px solid ${c}` }}>
+                  <div style={{ fontWeight: 800, fontSize: 16, color: "#0f172a" }}>{v}</div>
+                  <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ),
+        side: "top",
+      },
+      {
+        target: "#jsx-code",
+        title: (
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ background: "#1e293b", color: "#38bdf8", fontFamily: "monospace", fontSize: 12, padding: "2px 8px", borderRadius: 6 }}>tsx</span>
+            Code examples in popovers
+          </span>
+        ),
+        content: (
+          <div>
+            <p style={{ marginBottom: 8, fontSize: 13, color: "#64748b" }}>Render formatted code inline:</p>
+            <pre style={{ background: "#0f172a", color: "#e2e8f0", borderRadius: 8, padding: "10px 12px", fontSize: 11, lineHeight: 1.7, margin: 0, overflow: "auto" }}>
+              <code>{`{ target: "#el",
+  title: <strong>Rich</strong>,
+  content: <MyChart />,
+}`}</code>
+            </pre>
+          </div>
+        ),
+        side: "bottom",
+      },
     ],
     showProgress: true,
   });
+
   return (
     <div className="space-y-4">
-      <span id="jsx-badge" className="badge badge-blue" style={{ fontSize: "0.85rem", padding: "6px 14px" }}>Target element</span>
-      <button className="btn btn-primary" onClick={() => start()}>▶ Start JSX tour</button>
+      {/* Three distinct target elements */}
+      <div id="jsx-hero" className="rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-violet-50 p-4 dark:border-blue-800/50 dark:from-blue-950/30 dark:to-violet-950/30">
+        <div className="text-sm font-semibold text-blue-900 dark:text-blue-200">Step 1 — styled title &amp; pill tags</div>
+        <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">Click ▶ to see a gradient title and tag cloud</div>
+      </div>
+      <div id="jsx-stats" className="grid grid-cols-4 gap-2">
+        {[["↑ 24%","Growth"],["1,284","Users"],["$48k","Revenue"],["99.9%","Uptime"]].map(([v,l]) => (
+          <div key={l} className="rounded-lg border border-gray-200 bg-gray-50 p-2 text-center dark:border-zinc-700 dark:bg-zinc-800/50">
+            <div className="text-sm font-bold">{v}</div>
+            <div className="text-[10px] text-gray-500">{l}</div>
+          </div>
+        ))}
+      </div>
+      <div id="jsx-code" className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-mono text-xs text-gray-600 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-400">
+        {"{ title: <ReactNode />, content: <AnyComponent /> }"}
+      </div>
+      <button className="btn btn-primary" onClick={() => start()}>▶ Start JSX tour (3 steps)</button>
     </div>
   );
 }
@@ -159,9 +225,11 @@ function JSXContentDemo() {
 function SpotlightDemo() {
   const { start } = useTour({
     steps: [
-      { target: "#spot-a", content: "Spotlight: element is highlighted — no popover.",            popoverless: true  },
-      { target: "#spot-b", content: "Regular step for comparison.", side: "bottom"                                  },
-      { target: "#spot-c", content: "Spotlight again — draws attention without interrupting.",    popoverless: true  },
+      // content is required by TourStep but not rendered when popoverless: true —
+      // it's still good practice to describe the step for accessibility / future use.
+      { target: "#spot-a", content: "Element A spotlight", popoverless: true  },
+      { target: "#spot-b", content: "Regular step for comparison.", side: "bottom" },
+      { target: "#spot-c", content: "Element C spotlight", popoverless: true  },
     ],
     showProgress: true,
   });
@@ -213,17 +281,22 @@ function CustomPopoverDemo() {
 
 function ConditionalDemo() {
   const [plan, setPlan] = React.useState<"free" | "pro">("free");
-  const { start, totalSteps } = useTour({
-    steps: [
-      { target: "#cond-dash", title: "Dashboard", content: "Your main workspace.", side: "bottom" },
-      { target: "#cond-up",   title: "Upgrade",   content: "Unlock unlimited projects.", side: "top",
-        visibleWhen: () => plan === "free" },
-      { target: "#cond-pro",  title: "Pro feature", content: "Only visible to Pro users.", side: "top",
-        visibleWhen: () => plan === "pro" },
-      { target: "#cond-set",  title: "Settings", content: "Adjust your preferences.", side: "top" },
-    ],
-    showProgress: true,
-  });
+
+  // Define steps outside useTour so we can pre-compute visible count for display
+  // before the tour starts (totalSteps from useTour is 0 until start() is called).
+  const steps = [
+    { target: "#cond-dash", title: "Dashboard",   content: "Your main workspace.", side: "bottom" as const },
+    { target: "#cond-up",   title: "Upgrade",     content: "Unlock unlimited projects.", side: "top" as const,
+      visibleWhen: () => plan === "free" },
+    { target: "#cond-pro",  title: "Pro feature", content: "Only visible to Pro users.", side: "top" as const,
+      visibleWhen: () => plan === "pro" },
+    { target: "#cond-set",  title: "Settings",    content: "Adjust your preferences.", side: "top" as const },
+  ];
+
+  const visibleCount = steps.filter(s => !s.visibleWhen || s.visibleWhen()).length;
+  const { start, totalSteps } = useTour({ steps, showProgress: true });
+  // Use the live totalSteps when the tour is running, pre-computed count otherwise.
+  const displayCount = totalSteps > 0 ? totalSteps : visibleCount;
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -244,7 +317,7 @@ function ConditionalDemo() {
       ))}
       <div className="flex items-center gap-3">
         <button className="btn btn-primary" onClick={() => start()}>▶ Start tour</button>
-        <span className="text-sm text-gray-500">{totalSteps} visible steps for {plan} plan</span>
+        <span className="text-sm text-gray-500">{displayCount} visible steps for {plan} plan</span>
       </div>
     </div>
   );
@@ -348,7 +421,7 @@ function RestartDemo() {
 }
 
 function TooltipDemo() {
-  const [dismissed, setDismissed] = useState<string[]>([]);
+  const [dismissed, setDismissed] = useState(false);
   return (
     <div className="space-y-6">
       <p className="text-sm text-gray-500 dark:text-zinc-400">Hover or click the elements below. No overlay, no darkening.</p>
@@ -361,7 +434,7 @@ function TooltipDemo() {
           <button id="tip-click" className="btn btn-secondary">Click me</button>
           <TourTooltip target="#tip-click" content="Toggles on click." trigger="click" side="right" />
         </div>
-        {!dismissed.includes("always") && (
+        {!dismissed && (
           <div className="flex items-center gap-2">
             <span id="tip-always" className="badge badge-blue">✨ New feature</span>
             <TourTooltip
@@ -370,7 +443,7 @@ function TooltipDemo() {
               content="Persistent hint with a dismiss button."
               trigger="always"
               side="bottom"
-              onDismiss={() => setDismissed(d => [...d, "always"])}
+              onDismiss={() => setDismissed(true)}
             />
           </div>
         )}
@@ -566,17 +639,47 @@ const GROUPS: ExampleGroup[] = [
   {
     title: "Content & display",
     items: [
-      { id: "jsx",           label: "JSX content",        desc: "React nodes in title & content — images, styled text",  component: <JSXContentDemo />,   code: `useTour({
-  steps: [{
-    target: "#element",
-    title: <strong style={{ color: "#3b82f6" }}>Rich title</strong>,
-    content: (
-      <div>
-        <p>Any React node here.</p>
-        <video src="/demo.mp4" controls />
-      </div>
-    ),
-  }],
+      { id: "jsx",           label: "JSX content",        desc: "React nodes in title & content — gradients, stats, code blocks, any component",  component: <JSXContentDemo />,   code: `useTour({
+  steps: [
+    {
+      target: "#hero",
+      // Gradient title using inline styles
+      title: (
+        <span style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                        WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          Styled title
+        </span>
+      ),
+      content: (
+        <div>
+          <p>Both title and content accept any React node.</p>
+          <div style={{ display: "flex", gap: 5 }}>
+            {["React","JSX","Images","Video"].map(t => (
+              <span key={t} style={{ background: "#eff6ff", color: "#1d4ed8",
+                                     borderRadius: 999, padding: "2px 8px", fontSize: 11 }}>{t}</span>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      target: "#stats",
+      title: "📊 Embed live data",
+      // Render a mini-dashboard inside the popover
+      content: <MyStatsGrid />,
+    },
+    {
+      target: "#code-block",
+      title: <span><code>tsx</code> Code examples in popovers</span>,
+      content: (
+        <pre style={{ background: "#0f172a", color: "#e2e8f0",
+                      borderRadius: 8, padding: 12, fontSize: 11 }}>
+          <code>{'{ content: <AnyComponent /> }'}</code>
+        </pre>
+      ),
+    },
+  ],
+  showProgress: true,
 });` },
       { id: "render-popover",label: "Custom popover",      desc: "Replace driver.js's default popover with your own React component", component: <CustomPopoverDemo />, code: `useTour({
   renderPopover: ({ step, next, stop, isLast, stepIndex, totalSteps }) => (
@@ -849,11 +952,19 @@ export default function ExamplesPage() {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Code</div>
-              <button onClick={() => setShowCode(s => !s)} className="text-xs text-blue-600 hover:underline dark:text-blue-400">
-                {showCode ? "Hide" : "Show full code"}
+              <button onClick={() => setShowCode(s => !s)} className="text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400">
+                {showCode ? "Hide code ↑" : "Show full code ↓"}
               </button>
             </div>
-            <CodeBlock code={active.code} />
+            {showCode && <CodeBlock code={active.code} />}
+            {!showCode && (
+              <button
+                onClick={() => setShowCode(true)}
+                className="w-full rounded-xl border-2 border-dashed border-gray-200 py-4 text-sm text-gray-400 transition-colors hover:border-blue-300 hover:text-blue-500 dark:border-zinc-700 dark:hover:border-blue-700 dark:hover:text-blue-400"
+              >
+                Click to see code snippet
+              </button>
+            )}
           </div>
         </div>
       </main>

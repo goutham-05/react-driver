@@ -31,27 +31,36 @@ export function useTourStep(stepIndex: number): TourStepState {
   const ctx = useTourContext();
   const [activeStepIndex, setActiveStepIndex] = useState<number | null>(null);
 
-  // Subscribe to data-tour-step mutations on the DOM — the library sets this
-  // attribute on the active element inside onHighlighted (after animation).
+  // Subscribe to data-tour-step attribute changes. attributeFilter ensures
+  // the observer only fires for this one attribute — NOT for every DOM mutation.
+  // We read the value directly from the mutation record to avoid a querySelector.
   useEffect(() => {
     if (typeof document === "undefined") return;
 
-    const update = () => {
-      const el = document.querySelector("[data-tour-step]");
-      if (!el) {
-        setActiveStepIndex(null);
-        return;
-      }
-      const idx = Number(el.getAttribute("data-tour-step"));
+    // Seed initial state in case a tour is already running when this mounts.
+    const existing = document.querySelector<HTMLElement>("[data-tour-step]");
+    if (existing) {
+      const idx = Number(existing.getAttribute("data-tour-step"));
       setActiveStepIndex(isNaN(idx) ? null : idx);
-    };
+    }
 
-    update();
+    const observer = new MutationObserver((mutations) => {
+      for (const mut of mutations) {
+        const el = mut.target as HTMLElement;
+        const raw = el.getAttribute("data-tour-step");
+        if (raw !== null) {
+          const idx = Number(raw);
+          setActiveStepIndex(isNaN(idx) ? null : idx);
+        } else {
+          setActiveStepIndex(null);
+        }
+        return; // only one element carries data-tour-step at a time
+      }
+    });
 
-    const observer = new MutationObserver(update);
     observer.observe(document.body, {
       attributes: true,
-      attributeFilter: ["data-tour-step"],
+      attributeFilter: ["data-tour-step"], // fires ONLY for this attribute
       subtree: true,
     });
 

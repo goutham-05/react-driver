@@ -64,19 +64,19 @@ test.describe("basic tour", () => {
     // behind the overlay. dispatchEvent is correct here — it tests the
     // programmatic API as it would be called from code (not UI interaction,
     // which the overlay is designed to block).
-    const btn = (text: RegExp | string) => page.locator("button", { hasText: text });
-
-    await btn(/^next\(\)/).dispatchEvent("click");
+    // Use getByRole with exact names to avoid matching the sidebar nav item
+    // whose description text also contains "prev()".
+    await page.getByRole("button", { name: "next() →", exact: true }).dispatchEvent("click");
     await expectPopover(page, "Step 2 of 4");
 
-    await btn(/prev\(\)/).dispatchEvent("click");
+    await page.getByRole("button", { name: "← prev()", exact: true }).dispatchEvent("click");
     await expectPopover(page, "Step 1 of 4");
 
-    await btn(/^next\(\)/).dispatchEvent("click");
-    await btn("moveTo(0)").dispatchEvent("click");
+    await page.getByRole("button", { name: "next() →", exact: true }).dispatchEvent("click");
+    await page.getByRole("button", { name: "moveTo(0)", exact: true }).dispatchEvent("click");
     await expectPopover(page, "Step 1 of 4");
 
-    await btn(/^stop\(\)/).dispatchEvent("click");
+    await page.getByRole("button", { name: "stop()", exact: true }).dispatchEvent("click");
     await expectTourClosed(page);
   });
 });

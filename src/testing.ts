@@ -25,6 +25,7 @@ export function createMockTour(overrides?: Partial<TourControls>): TourControls 
     next:        () => {},
     prev:        () => {},
     moveTo:      () => {},
+    onComplete:  () => () => {},
     isActive:    false,
     currentStep: 0,
     totalSteps:  0,

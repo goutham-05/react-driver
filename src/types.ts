@@ -368,6 +368,17 @@ export interface TourControls {
   stop: () => void;
   /** Restart the tour from step 0 without triggering onSkip or onFinish. */
   restart: () => void;
+  /**
+   * Subscribe to tour completion from anywhere — without touching the tour's
+   * config. Returns an unsubscribe function. Useful for components that react
+   * to a tour ending but don't own the `useTour` call.
+   *
+   * @example
+   * useEffect(() => controls.onComplete((reason) => {
+   *   if (reason === "finish") confetti();
+   * }), []);
+   */
+  onComplete: (cb: (reason: "finish" | "skip") => void) => () => void;
   /** Advance to the next step. */
   next: () => void;
   /** Go back to the previous step. */

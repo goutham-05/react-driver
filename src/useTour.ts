@@ -4,6 +4,18 @@ import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import { driver } from "driver.js";
 import type { Config, DriveStep } from "driver.js";
+
+/** Minimal interface over the driver.js instance. */
+interface DriverLike {
+  drive(stepIndex?: number): void;
+  moveNext(): void;
+  movePrevious(): void;
+  moveTo(idx: number): void;
+  destroy(): void;
+  isLastStep(): boolean;
+  isFirstStep(): boolean;
+  getActiveIndex(): number | undefined;
+}
 import { useTourContext } from "./TourContext";
 import { waitForElement } from "./waitForElement";
 import {
@@ -149,7 +161,7 @@ export function useTour(config: TourConfig): TourControls {
   const configRef = useRef(config);
   configRef.current = config;
 
-  const driverRef               = useRef<ReturnType<typeof driver> | null>(null);
+  const driverRef               = useRef<DriverLike | null>(null);
   const advanceOnCleanupRef     = useRef<(() => void) | null>(null);
   const autoAdvanceTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
   const customPopoverRootRef    = useRef<{ unmount: () => void } | null>(null);
@@ -287,7 +299,7 @@ export function useTour(config: TourConfig): TourControls {
       const originalStepAt = (driverIdx: number): TourStep | undefined =>
         configRef.current.steps[indexMapRef.current[driverIdx]];
 
-      const advanceStep = (d: ReturnType<typeof driver>, driverIdx: number) => {
+      const advanceStep = (d: DriverLike, driverIdx: number) => {
         if (d.isLastStep()) { exitReasonRef.current = "close"; d.destroy(); return; }
         const stepCfg     = originalStepAt(driverIdx);
         const nextDriverIdx = driverIdx + 1;
@@ -312,7 +324,7 @@ export function useTour(config: TourConfig): TourControls {
           : proceed();
       };
 
-      const retreatStep = (d: ReturnType<typeof driver>, driverIdx: number) => {
+      const retreatStep = (d: DriverLike, driverIdx: number) => {
         if (d.isFirstStep()) return;
         const stepCfg     = originalStepAt(driverIdx);
         const prevDriverIdx = driverIdx - 1;
@@ -478,12 +490,14 @@ export function useTour(config: TourConfig): TourControls {
             exitReasonRef.current = "close";
             if (cfg.debug) console.log("[react-driver] tour finished");
             cfg.onFinish?.();
+            completionListeners.current.forEach(cb => cb("finish"));
             if (cfg.id && cfg.persist) markTourSeen(cfg.id, cfg.persist, cfg.version);
             if (cfg.id && cfg.persistProgress) clearProgress(cfg.id, cfg.persist ?? true);
           } else {
             exitReasonRef.current = "skip";
             if (cfg.debug) console.log("[react-driver] tour skipped");
             cfg.onSkip?.();
+            completionListeners.current.forEach(cb => cb("skip"));
           }
           d.destroy();
         },
@@ -545,13 +559,25 @@ export function useTour(config: TourConfig): TourControls {
   const moveTo  = useCallback((idx: number) => driverRef.current?.moveTo(idx), []);
   const restart = useCallback(() => start(0), [start]);
 
+  // onComplete subscriber set — notified when the tour finishes or is skipped.
+  const completionListeners = useRef<Set<(reason: "finish" | "skip") => void>>(new Set());
+
+  const onComplete = useCallback((cb: (reason: "finish" | "skip") => void) => {
+    completionListeners.current.add(cb);
+    return () => { completionListeners.current.delete(cb); };
+  }, []);
+
   // showAfter: track visits and auto-start when conditions are met.
+  // visitCountedRef guards against React Strict Mode's double-invocation of
+  // effects — ensures we count exactly one visit per real mount, not two.
+  const visitCountedRef = useRef(false);
   useEffect(() => {
     const cfg = configRef.current;
     if (!cfg.showAfter && !cfg.id) return;
 
-    // Increment visit count on mount.
-    if (cfg.id && cfg.showAfter?.visits !== undefined) {
+    // Increment visit count exactly once per real mount.
+    if (!visitCountedRef.current && cfg.id && cfg.showAfter?.visits !== undefined) {
+      visitCountedRef.current = true;
       incrementVisitCount(cfg.id);
     }
 
@@ -579,5 +605,5 @@ export function useTour(config: TourConfig): TourControls {
     };
   }, [clearAutoAdvanceTimer]);
 
-  return { start, stop, restart, next, prev, moveTo, isActive, currentStep, totalSteps };
+  return { start, stop, restart, next, prev, moveTo, onComplete, isActive, currentStep, totalSteps };
 }

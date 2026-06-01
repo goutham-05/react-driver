@@ -9,6 +9,9 @@ export default defineConfig([
     dts: false,
     sourcemap: true,
     clean: true,
+    // driver.js is loaded via dynamic import() — mark it external so the
+    // consumer's bundler (Vite/webpack) code-splits it into a separate chunk
+    // that's only downloaded when start() is first called.
     external: ["react", "react-dom"],
   },
   {
