@@ -176,7 +176,7 @@ git clone https://github.com/goutham-05/react-driver
 cd react-driver
 npm install
 npm test        # vitest — 128 tests
-npm run build   # tsup — ESM + CJS + UMD + .d.ts + .d.cts
+npm run build   # tsup — ESM + CJS + .d.ts + .d.cts
 ```
 
 ---

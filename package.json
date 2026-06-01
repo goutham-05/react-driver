@@ -1,6 +1,6 @@
 {
   "name": "@oqlet/react-driver",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Schema-driven, plug-and-play guided tours for React — built on driver.js.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -18,7 +18,7 @@
     "./umd": "./dist/react-driver.umd.js",
     "./testing": {
       "types": "./dist/testing.d.cts",
-      "import":  "./dist/testing.mjs",
+      "import": "./dist/testing.mjs",
       "require": "./dist/testing.js"
     }
   },
