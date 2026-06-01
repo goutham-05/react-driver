@@ -133,4 +133,4 @@ jobs:
           git add package.json package-lock.json README.md
           git commit -m "chore: release v${{ steps.version.outputs.version }}"
           git tag "v${{ steps.version.outputs.version }}"
-          git push origin main --follow-tags
+          git push origin main "v${{ steps.version.outputs.version }}"
