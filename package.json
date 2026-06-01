@@ -1,6 +1,6 @@
 {
   "name": "@oqlet/react-driver",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Schema-driven, plug-and-play guided tours for React — built on driver.js.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
